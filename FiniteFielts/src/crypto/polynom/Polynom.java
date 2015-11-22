@@ -86,9 +86,9 @@ public class Polynom {
 	 * returns a new Polynom that is calculated be (Polynom1 + Polynom2) modulo
 	 * p. The modulo of both Polynoms has to be equal.
 	 */
-	public Polynom createAddPolynom(Polynom polynom) {
+	public Polynom calculateAddPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
-		int maxDegree = Math.max(this.getDegree(), polynom.getDegree());
+		int maxDegree = Math.max(this.getDegree(), polynom.getDegree()) + 1;
 		int[] a = this.getInvertedPolynom()._polynom;
 		int[] b = polynom.getInvertedPolynom()._polynom;
 		int[] c = new int[maxDegree];
@@ -119,7 +119,7 @@ public class Polynom {
 	 * returns a new Polynom that is calculated be (Polynom1 * Polynom2) modulo
 	 * p. The modulo of both Polynoms has to be equal.
 	 */
-	public Polynom createMuliplyPolynom(Polynom polynom) {
+	public Polynom calculateMuliplyPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 		int[] a = this.getInvertedPolynom()._polynom;
 		int[] b = polynom.getInvertedPolynom()._polynom;
@@ -148,6 +148,40 @@ public class Polynom {
 		return createPolyFromArray(c, MODULO).getInvertedPolynom();
 	}
 
+	/**
+	 * Returns the Rest as an Polynom of Polynom1/Polynom2
+	 */
+	public Polynom calculateDividePolynomRest(Polynom polynom) {
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+		Polynom p0 = polynom;
+		int max = Math.max(this.getDegree(), polynom.getDegree());
+		int min = Math.min(this.getDegree(), polynom.getDegree());
+		Polynom rest = this;
+		Polynom f = new Polynom((max - min + 1), MODULO);
+		// f*p0+rest == this
+		int p0degree = p0.getDegree();
+		int restdegree = rest.getDegree();
+		while (restdegree >= p0degree) {
+
+			f._polynom[restdegree - p0degree] = modDivMod(p0._polynom[p0degree], rest._polynom[restdegree], p0.MODULO);
+			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMuliplyPolynom(p0));
+			restdegree = rest.getDegree();
+		}
+
+		return rest;
+	}
+
+	@VisibleForTesting
+	static int modDivMod(int a, int b, int modulo) {
+		// a/b
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			if ((a + (long) i * (long) modulo) % b == 0) {
+				return (int) (((a + (long) i * (long) modulo) / b) % modulo);
+			}
+		}
+		throw new ArithmeticException();
+	}
+
 	private Polynom getInvertedPolynom() {
 		int[] invertedPoly = _polynom.clone();
 
@@ -173,6 +207,7 @@ public class Polynom {
 	Polynom(int size, int p) {
 		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		_polynom = new int[size];
+		initPoly();
 		MODULO = p;
 	}
 
@@ -185,8 +220,15 @@ public class Polynom {
 	private Polynom(int size, int startValue, int p) {
 		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		_polynom = new int[size];
+		initPoly();
 		_polynom[0] = startValue;
 		MODULO = p;
+	}
+
+	private void initPoly() {
+		for (int i = 0; i < _polynom.length; i++) {
+			_polynom[i] = 0;
+		}
 	}
 
 	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
@@ -255,7 +297,7 @@ public class Polynom {
 				} else {
 					int[] a = this.getInvertedPolynom()._polynom;
 					int[] b = poly.getInvertedPolynom()._polynom;
-					int maxDegree = Math.max(this.getDegree(), poly.getDegree());
+					int maxDegree = Math.max(this.getDegree(), poly.getDegree()) + 1;
 					for (int i = 0; i < maxDegree; i++) {
 						if (a.length > i && b.length > i) {
 							if (a[i] != b[i]) {
