@@ -21,6 +21,7 @@ $RECYCLE.BIN/
 RemoteSystemsTempFiles
 .settings
 *.class
+.recommenders
 
 # =========================
 # Operating System Files

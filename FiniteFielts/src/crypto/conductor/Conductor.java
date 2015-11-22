@@ -14,7 +14,6 @@ public class Conductor {
 		List<Polynom> generatingPolynoms = Polynom.getGeneratingPolynomes(p, n);
 		System.out.println("Generierungspolynom:");
 		PolynomUtil.printPolys(generatingPolynoms);
-
 		// Zahlenmenge erzeugen
 		// Rechentabelle erstellen
 

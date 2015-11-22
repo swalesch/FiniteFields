@@ -1,8 +1,12 @@
 package crypto.polynom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 
 public class Polynom {
 	public int[] _polynom;
@@ -16,7 +20,8 @@ public class Polynom {
 		_polynom[0] = startValue;
 	}
 
-	private Polynom(int size) {
+	@VisibleForTesting
+	Polynom(int size) {
 		_polynom = new int[size];
 	}
 
@@ -28,6 +33,7 @@ public class Polynom {
 	 *         a empty List if there are no nullPoints
 	 */
 	public List<Integer> getAllNullPoints(int p) {
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		int sum = 0;
 		List nullPoints = new ArrayList<Integer>();
 		for (int inputValue = 0; inputValue < p; inputValue++) {
@@ -89,7 +95,9 @@ public class Polynom {
 	}
 
 	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
-		// Precondition p is prime
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
+		Preconditions.checkNotNull(polynomCreator);
+
 		List<Polynom> polynomes = new ArrayList<Polynom>();
 		int polynomCount = (int) Math.pow(p, n);
 		int help = 0;
@@ -103,7 +111,7 @@ public class Polynom {
 				help = 1;
 				break;
 			default:
-				break;
+				throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
 			}
 		}
 
@@ -131,5 +139,14 @@ public class Polynom {
 			}
 		}
 		return polynomes;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Polynom) {
+			Polynom poly = (Polynom) obj;
+			return Arrays.equals(_polynom, poly._polynom);
+		}
+		return false;
 	}
 }
