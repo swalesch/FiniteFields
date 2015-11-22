@@ -82,6 +82,10 @@ public class Polynom {
 		return nullPoints;
 	}
 
+	/**
+	 * returns a new Polynom that is calculated be (Polynom1 + Polynom2) modulo
+	 * p. The modulo of both Polynoms has to be equal.
+	 */
 	public Polynom createAddPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 		int maxDegree = Math.max(this.getDegree(), polynom.getDegree());
@@ -111,6 +115,39 @@ public class Polynom {
 		return createPolyFromArray(c, MODULO).getInvertedPolynom();
 	}
 
+	/**
+	 * returns a new Polynom that is calculated be (Polynom1 * Polynom2) modulo
+	 * p. The modulo of both Polynoms has to be equal.
+	 */
+	public Polynom createMuliplyPolynom(Polynom polynom) {
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+		int[] a = this.getInvertedPolynom()._polynom;
+		int[] b = polynom.getInvertedPolynom()._polynom;
+		int[] c = new int[this.getDegree() + polynom.getDegree() + 1];
+
+		// initial c
+		for (int i = 0; i < c.length; i++) {
+			c[i] = 0;
+		}
+
+		// a*b = c
+		for (int i = 0; i < this.getDegree() + 1; i++) {
+			for (int j = 0; j < polynom.getDegree() + 1; j++) {
+				if (a[i] > 0 && b[j] > 0) {
+					c[i + j] = (c[i + j] + a[i] * b[j]) % MODULO;
+				} else {
+					if (a[i] > 0) {
+						c[i] = (c[i] + a[i] * b[j]) % MODULO;
+					} else if (b[j] > 0) {
+						c[j] = (c[j] + a[i] * b[j]) % MODULO;
+					}
+				}
+			}
+		}
+
+		return createPolyFromArray(c, MODULO).getInvertedPolynom();
+	}
+
 	private Polynom getInvertedPolynom() {
 		int[] invertedPoly = _polynom.clone();
 
@@ -122,10 +159,11 @@ public class Polynom {
 		return Polynom.createPolyFromArray(invertedPoly, MODULO);
 	}
 
-	private int getDegree() {
+	@VisibleForTesting
+	int getDegree() {
 		for (int i = 0; i < _polynom.length; i++) {
 			if (_polynom[i] > 0) {
-				return i + 1;
+				return _polynom.length - 1 - i;
 			}
 		}
 		return 0;

@@ -81,6 +81,55 @@ public class PolynomTest {
 
 	}
 
+	@Test
+	public void testMultiplyPolynom() {
+		assertThat(Polynom.createPolyFromArray(new int[] { 1 }, 2)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 0, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1 }, 2)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1, 0 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1, 1, 1 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 3)
+				.createMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 2, 1 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 2, 0, 1 }, 3));
+
+	}
+
+	@Test
+	public void testEquels() {
+		assertThat(Polynom.createPolyFromArray(new int[] { 0, 1 }, 2))
+				.isNotEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1 }, 2))
+				.isNotEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2))
+				.isEqualTo(Polynom.createPolyFromArray(new int[] { 0, 1, 1 }, 2));
+
+	}
+
+	@Test
+	public void testDegree() {
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2).getDegree()).isEqualTo(1);
+		assertThat(Polynom.createPolyFromArray(new int[] { 0, 1, 1 }, 2).getDegree()).isEqualTo(1);
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 0, 0 }, 2).getDegree()).isEqualTo(2);
+		assertThat(Polynom.createPolyFromArray(new int[] { 0, 0, 1 }, 2).getDegree()).isEqualTo(0);
+	}
+
 	private static List<Polynom> getAllPolynomp2n2() {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0 }, 2));
