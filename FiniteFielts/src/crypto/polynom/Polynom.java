@@ -9,7 +9,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 public class Polynom {
-	protected int[] _polynom;
+	private int[] _polynom;
+	private final int MODULO;
 
 	private enum PolynomCreator {
 		GENERATING_POLYNOM, ALL_POLYNOM
@@ -24,12 +25,12 @@ public class Polynom {
 	 * @return a List out of all possible Polynoms to generate a modulo Field
 	 *         sized p^n
 	 */
-	public static List<Polynom> getGeneratingPolynomes(int p, int n) {
+	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
 
 		// getKandidates
 		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
 		// filter by Nullpoints
-		return allGeneratingPolynomes.stream().filter(ele -> ele.getAllNullPoints(p).isEmpty())
+		return allGeneratingPolynomes.stream().filter(ele -> ele.getAllNullPoints().isEmpty())
 				.collect(Collectors.toCollection(ArrayList::new));
 
 	}
@@ -42,15 +43,15 @@ public class Polynom {
 	 *            has to be a number, is represending the degree of the Polynoms
 	 * @return a List out of all possible Polynoms
 	 */
-	public static List<Polynom> getAllPolynomes(int p, int n) {
+	public static List<Polynom> createAllPolynomes(int p, int n) {
 		return getPolynomes(p, n, PolynomCreator.ALL_POLYNOM);
 	}
 
 	/**
 	 * Create a new Polynom from int Array
 	 */
-	public static Polynom createPolyFromArray(int[] vector) {
-		return new Polynom(vector);
+	public static Polynom createPolyFromArray(int[] vector, int p) {
+		return new Polynom(vector, p);
 	}
 
 	/**
@@ -60,11 +61,11 @@ public class Polynom {
 	 * @return List with numbers therfor the polynome becomes Zero, will return
 	 *         a empty List if there are no nullPoints
 	 */
-	public List<Integer> getAllNullPoints(int p) {
-		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
+	public List<Integer> getAllNullPoints() {
+
 		int sum = 0;
 		List<Integer> nullPoints = new ArrayList<Integer>();
-		for (int inputValue = 0; inputValue < p; inputValue++) {
+		for (int inputValue = 0; inputValue < MODULO; inputValue++) {
 			for (int position = 0; position < _polynom.length; position++) {
 				if (_polynom.length - 1 == position) {
 					sum += _polynom[position];
@@ -72,7 +73,7 @@ public class Polynom {
 					sum += (int) Math.pow(_polynom[position] * inputValue, _polynom.length - 1 - position);
 				}
 			}
-			if (sum % p == 0) {
+			if (sum % MODULO == 0) {
 				nullPoints.add(inputValue);
 			}
 			sum = 0;
@@ -81,10 +82,11 @@ public class Polynom {
 		return nullPoints;
 	}
 
-	public Polynom createAddPolynom(Polynom poly, int p) {
-		int maxDegree = Math.max(this.getDegree(), poly.getDegree());
+	public Polynom createAddPolynom(Polynom polynom) {
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+		int maxDegree = Math.max(this.getDegree(), polynom.getDegree());
 		int[] a = this.getInvertedPolynom()._polynom;
-		int[] b = poly.getInvertedPolynom()._polynom;
+		int[] b = polynom.getInvertedPolynom()._polynom;
 		int[] c = new int[maxDegree];
 
 		// initial c
@@ -96,7 +98,7 @@ public class Polynom {
 		for (int i = 0; i < maxDegree; i++) {
 			if (a.length > i && b.length > i) {
 				// rechnen
-				c[i] = (a[i] + b[i]) % p;
+				c[i] = (a[i] + b[i]) % MODULO;
 			} else {
 				// nur noch adden bis ende
 				if (a.length > i) {
@@ -106,7 +108,7 @@ public class Polynom {
 				}
 			}
 		}
-		return createPolyFromArray(c).getInvertedPolynom();
+		return createPolyFromArray(c, MODULO).getInvertedPolynom();
 	}
 
 	private Polynom getInvertedPolynom() {
@@ -117,7 +119,7 @@ public class Polynom {
 			invertedPoly[i] = invertedPoly[invertedPoly.length - i - 1];
 			invertedPoly[invertedPoly.length - i - 1] = temp;
 		}
-		return Polynom.createPolyFromArray(invertedPoly);
+		return Polynom.createPolyFromArray(invertedPoly, MODULO);
 	}
 
 	private int getDegree() {
@@ -130,21 +132,26 @@ public class Polynom {
 	}
 
 	@VisibleForTesting
-	Polynom(int size) {
+	Polynom(int size, int p) {
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		_polynom = new int[size];
+		MODULO = p;
 	}
 
-	private Polynom(int[] vector) {
+	private Polynom(int[] vector, int p) {
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		_polynom = vector;
+		MODULO = p;
 	}
 
-	private Polynom(int size, int startValue) {
+	private Polynom(int size, int startValue, int p) {
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		_polynom = new int[size];
 		_polynom[0] = startValue;
+		MODULO = p;
 	}
 
 	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
-		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
 		Preconditions.checkNotNull(polynomCreator);
 
 		List<Polynom> polynomes = new ArrayList<Polynom>();
@@ -153,10 +160,10 @@ public class Polynom {
 		for (int i = 0; i < polynomCount; i++) {
 			switch (polynomCreator) {
 			case GENERATING_POLYNOM:
-				polynomes.add(new Polynom(n + 1, 1));
+				polynomes.add(new Polynom(n + 1, 1, p));
 				break;
 			case ALL_POLYNOM:
-				polynomes.add(new Polynom(n));
+				polynomes.add(new Polynom(n, p));
 				help = 1;
 				break;
 			default:
@@ -204,30 +211,32 @@ public class Polynom {
 	public boolean equals(Object obj) {
 		if (obj instanceof Polynom) {
 			Polynom poly = (Polynom) obj;
-			if (_polynom.length == poly._polynom.length) {
-				return Arrays.equals(_polynom, poly._polynom);
-			} else {
-				int[] a = this.getInvertedPolynom()._polynom;
-				int[] b = poly.getInvertedPolynom()._polynom;
-				int maxDegree = Math.max(this.getDegree(), poly.getDegree());
-				for (int i = 0; i < maxDegree; i++) {
-					if (a.length > i && b.length > i) {
-						if (a[i] != b[i]) {
-							return false;
-						}
-					} else {
-						if (a.length > i) {
-							if (a[i] != 0) {
+			if (MODULO == poly.MODULO) {
+				if (_polynom.length == poly._polynom.length) {
+					return Arrays.equals(_polynom, poly._polynom);
+				} else {
+					int[] a = this.getInvertedPolynom()._polynom;
+					int[] b = poly.getInvertedPolynom()._polynom;
+					int maxDegree = Math.max(this.getDegree(), poly.getDegree());
+					for (int i = 0; i < maxDegree; i++) {
+						if (a.length > i && b.length > i) {
+							if (a[i] != b[i]) {
 								return false;
 							}
 						} else {
-							if (b[i] != 0) {
-								return false;
+							if (a.length > i) {
+								if (a[i] != 0) {
+									return false;
+								}
+							} else {
+								if (b[i] != 0) {
+									return false;
+								}
 							}
 						}
 					}
+					return true;
 				}
-				return true;
 			}
 		}
 		return false;

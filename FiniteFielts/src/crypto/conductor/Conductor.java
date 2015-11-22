@@ -11,7 +11,7 @@ public class Conductor {
 		// Fi = p^n
 		int p = 2, n = 3;
 		// get generating Polynoms
-		List<Polynom> generatingPolynoms = Polynom.getGeneratingPolynomes(p, n);
+		List<Polynom> generatingPolynoms = Polynom.createGeneratingPolynomes(p, n);
 		System.out.println("Generierungspolynom:");
 		PolynomUtil.printPolys(generatingPolynoms);
 		// Zahlenmenge erzeugen
