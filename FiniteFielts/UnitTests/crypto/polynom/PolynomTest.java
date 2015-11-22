@@ -41,50 +41,76 @@ public class PolynomTest {
 
 	@Test
 	public void testNullpoints() {
-		assertThat(createPolyFromArray(new int[] { 1, 1, 1 }).getAllNullPoints(2)).isEmpty();
-		assertThat(createPolyFromArray(new int[] { 1, 1, 0 }).getAllNullPoints(2)).containsOnly(0, 1);
-		assertThat(createPolyFromArray(new int[] { 1, 1, 1, 1 }).getAllNullPoints(2)).containsOnly(1);
-		assertThat(createPolyFromArray(new int[] { 1, 1, 0 }).getAllNullPoints(3)).containsOnly(0, 2);
-		assertThat(createPolyFromArray(new int[] { 1, 0, 1 }).getAllNullPoints(3)).isEmpty();
-		assertThat(createPolyFromArray(new int[] { 1, 2, 1 }).getAllNullPoints(3)).containsOnly(2);
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1, 1 }).getAllNullPoints(2)).isEmpty();
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1, 0 }).getAllNullPoints(2)).containsOnly(0, 1);
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1, 1, 1 }).getAllNullPoints(2)).containsOnly(1);
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1, 0 }).getAllNullPoints(3)).containsOnly(0, 2);
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }).getAllNullPoints(3)).isEmpty();
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 2, 1 }).getAllNullPoints(3)).containsOnly(2);
+	}
+
+	@Test
+	public void testAddPolynom() {
+		assertThat(Polynom.createPolyFromArray(new int[] { 0, 1 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }), 2))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }), 2))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 0, 0 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }), 2))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 0 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 0, 0 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }), 2))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 0 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }), 2))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 0, 0 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 2 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }), 3))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 2, 2 }));
+
+		assertThat(Polynom.createPolyFromArray(new int[] { 1, 2 })
+				.createAddPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }), 3))
+						.isEqualTo(Polynom.createPolyFromArray(new int[] { 2, 0 }));
+
 	}
 
 	private static List<Polynom> getAllPolynomp2n2() {
 		List<Polynom> polys = new ArrayList<Polynom>();
-		polys.add(createPolyFromArray(new int[] { 0, 0 }));
-		polys.add(createPolyFromArray(new int[] { 0, 1 }));
-		polys.add(createPolyFromArray(new int[] { 1, 0 }));
-		polys.add(createPolyFromArray(new int[] { 1, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 1 }));
 		return polys;
 	}
 
 	private static List<Polynom> getGeneratingPolynomp2n2() {
-		return Arrays.asList(createPolyFromArray(new int[] { 1, 1, 1 }));
+		return Arrays.asList(Polynom.createPolyFromArray(new int[] { 1, 1, 1 }));
 	}
 
 	private static List<Polynom> getGeneratingPolynomp2n3() {
 		List<Polynom> polys = new ArrayList<Polynom>();
-		polys.add(createPolyFromArray(new int[] { 1, 0, 1, 1 }));
-		polys.add(createPolyFromArray(new int[] { 1, 1, 0, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 0, 1, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 1, 0, 1 }));
 		return polys;
 	}
 
 	private static List<Polynom> getAllPolynomp2n3() {
 		List<Polynom> polys = new ArrayList<Polynom>();
-		polys.add(createPolyFromArray(new int[] { 0, 0, 0 }));
-		polys.add(createPolyFromArray(new int[] { 0, 0, 1 }));
-		polys.add(createPolyFromArray(new int[] { 0, 1, 0 }));
-		polys.add(createPolyFromArray(new int[] { 0, 1, 1 }));
-		polys.add(createPolyFromArray(new int[] { 1, 0, 0 }));
-		polys.add(createPolyFromArray(new int[] { 1, 0, 1 }));
-		polys.add(createPolyFromArray(new int[] { 1, 1, 0 }));
-		polys.add(createPolyFromArray(new int[] { 1, 1, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 1, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 0, 1, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 0, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 1, 0 }));
+		polys.add(Polynom.createPolyFromArray(new int[] { 1, 1, 1 }));
 		return polys;
-	}
-
-	private static Polynom createPolyFromArray(int[] vector) {
-		Polynom polynom = new Polynom(0);
-		polynom._polynom = vector;
-		return polynom;
 	}
 }
