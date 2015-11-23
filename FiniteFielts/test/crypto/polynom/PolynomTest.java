@@ -84,27 +84,27 @@ public class PolynomTest {
 	@Test
 	public void testMultiplyPolynom() {
 		assertThat(Polynom.createPolyFromArray(new int[] { 1 }, 2)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 0, 1 }, 2)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 0, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1 }, 2));
 
 		assertThat(Polynom.createPolyFromArray(new int[] { 1 }, 2)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2));
 
 		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }, 2));
 
 		assertThat(Polynom.createPolyFromArray(new int[] { 1, 0 }, 2)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1, 0 }, 2));
 
 		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 2)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }, 2)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 1, 0, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 1, 1, 1, 1 }, 2));
 
 		assertThat(Polynom.createPolyFromArray(new int[] { 1, 1 }, 3)
-				.calculateMuliplyPolynom(Polynom.createPolyFromArray(new int[] { 2, 1 }, 3)))
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new int[] { 2, 1 }, 3)))
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 2, 0, 1 }, 3));
 
 	}

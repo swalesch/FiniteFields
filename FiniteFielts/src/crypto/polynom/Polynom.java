@@ -119,7 +119,7 @@ public class Polynom {
 	 * returns a new Polynom that is calculated be (Polynom1 * Polynom2) modulo
 	 * p. The modulo of both Polynoms has to be equal.
 	 */
-	public Polynom calculateMuliplyPolynom(Polynom polynom) {
+	public Polynom calculateMultiplyPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 		int[] a = this.getInvertedPolynom()._polynom;
 		int[] b = polynom.getInvertedPolynom()._polynom;
@@ -164,7 +164,7 @@ public class Polynom {
 		while (restdegree >= p0degree) {
 
 			f._polynom[restdegree - p0degree] = modDivMod(p0._polynom[p0degree], rest._polynom[restdegree], p0.MODULO);
-			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMuliplyPolynom(p0));
+			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
 			restdegree = rest.getDegree();
 		}
 
