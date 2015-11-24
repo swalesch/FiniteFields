@@ -7,9 +7,11 @@ import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class Polynom {
-	private int[] _polynom;
+	private List<Integer> _polynom;
+	private final int LENGHT;
 	private final int MODULO;
 
 	private enum PolynomCreator {
@@ -50,7 +52,14 @@ public class Polynom {
 	/**
 	 * Create a new Polynom from int Array
 	 */
-	public static Polynom createPolyFromArray(int[] vector, int p) {
+	public static Polynom createPolyFromArray(Integer[] vector, int p) {
+		return new Polynom(vector, p);
+	}
+
+	/**
+	 * Create a new Polynom from List<Integer>
+	 */
+	public static Polynom createPolyFromList(List<Integer> vector, int p) {
 		return new Polynom(vector, p);
 	}
 
@@ -66,11 +75,11 @@ public class Polynom {
 		int sum = 0;
 		List<Integer> nullPoints = new ArrayList<Integer>();
 		for (int inputValue = 0; inputValue < MODULO; inputValue++) {
-			for (int position = 0; position < _polynom.length; position++) {
-				if (_polynom.length - 1 == position) {
-					sum += _polynom[position];
+			for (int position = 0; position < LENGHT; position++) {
+				if (LENGHT - 1 == position) {
+					sum += _polynom.get(position);
 				} else {
-					sum += (int) Math.pow(_polynom[position] * inputValue, _polynom.length - 1 - position);
+					sum += (int) Math.pow(_polynom.get(position) * inputValue, LENGHT - 1 - position);
 				}
 			}
 			if (sum % MODULO == 0) {
@@ -89,9 +98,12 @@ public class Polynom {
 	public Polynom calculateAddPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 		int maxDegree = Math.max(this.getDegree(), polynom.getDegree()) + 1;
-		int[] a = this.getInvertedPolynom()._polynom;
-		int[] b = polynom.getInvertedPolynom()._polynom;
-		int[] c = new int[maxDegree];
+
+		this.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+
+		Integer[] a = this.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+		Integer[] b = polynom.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+		Integer[] c = new Integer[maxDegree];
 
 		// initial c
 		for (int i = 0; i < c.length; i++) {
@@ -121,9 +133,9 @@ public class Polynom {
 	 */
 	public Polynom calculateMultiplyPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
-		int[] a = this.getInvertedPolynom()._polynom;
-		int[] b = polynom.getInvertedPolynom()._polynom;
-		int[] c = new int[this.getDegree() + polynom.getDegree() + 1];
+		Integer[] a = this.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+		Integer[] b = polynom.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+		Integer[] c = new Integer[this.getDegree() + polynom.getDegree() + 1];
 
 		// initial c
 		for (int i = 0; i < c.length; i++) {
@@ -162,9 +174,8 @@ public class Polynom {
 		int p0degree = p0.getDegree();
 		int restdegree = rest.getDegree();
 		while (restdegree >= p0degree) {
-
-			f._polynom[restdegree - p0degree] = p0._polynom[p0degree]
-					* PolynomUtil.getInversValue(rest._polynom[restdegree], p0.MODULO);
+			f._polynom.set(restdegree - p0degree,
+					p0._polynom.get(p0degree) * PolynomUtil.getInversValue(rest._polynom.get(restdegree), p0.MODULO));
 			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
 			restdegree = rest.getDegree();
 		}
@@ -173,21 +184,14 @@ public class Polynom {
 	}
 
 	private Polynom getInvertedPolynom() {
-		int[] invertedPoly = _polynom.clone();
-
-		for (int i = 0; i < invertedPoly.length / 2; i++) {
-			int temp = invertedPoly[i];
-			invertedPoly[i] = invertedPoly[invertedPoly.length - i - 1];
-			invertedPoly[invertedPoly.length - i - 1] = temp;
-		}
-		return Polynom.createPolyFromArray(invertedPoly, MODULO);
+		return new Polynom(Lists.reverse(_polynom), MODULO);
 	}
 
 	@VisibleForTesting
 	int getDegree() {
-		for (int i = 0; i < _polynom.length; i++) {
-			if (_polynom[i] > 0) {
-				return _polynom.length - 1 - i;
+		for (int i = 0; i < LENGHT; i++) {
+			if (_polynom.get(i) > 0) {
+				return LENGHT - 1 - i;
 			}
 		}
 		return 0;
@@ -196,28 +200,38 @@ public class Polynom {
 	@VisibleForTesting
 	Polynom(int size, int p) {
 		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
-		_polynom = new int[size];
+		_polynom = new ArrayList<Integer>();
+		LENGHT = size;
 		initPoly();
 		MODULO = p;
 	}
 
-	private Polynom(int[] vector, int p) {
+	private Polynom(List<Integer> polynom, int p) {
 		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
-		_polynom = vector;
+		_polynom = polynom;
+		MODULO = p;
+		LENGHT = polynom.size();
+	}
+
+	private Polynom(Integer[] vector, int p) {
+		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
+		_polynom = Arrays.asList(vector);
+		LENGHT = vector.length;
 		MODULO = p;
 	}
 
 	private Polynom(int size, int startValue, int p) {
 		Preconditions.checkArgument(PolynomUtil.isPrime(p), "p has to be Prim");
-		_polynom = new int[size];
+		_polynom = new ArrayList<Integer>();
+		LENGHT = size;
 		initPoly();
-		_polynom[0] = startValue;
+		_polynom.set(0, startValue);
 		MODULO = p;
 	}
 
 	private void initPoly() {
-		for (int i = 0; i < _polynom.length; i++) {
-			_polynom[i] = 0;
+		for (int i = 0; i < LENGHT; i++) {
+			_polynom.add(0);
 		}
 	}
 
@@ -250,8 +264,7 @@ public class Polynom {
 			minorCycle = 0;
 			majorCycle = 0;
 			for (int positionListe = 0; positionListe < polynomCount; positionListe++) {
-				// je prime +1
-				polynomes.get(positionListe)._polynom[positionArray - help] = value;
+				polynomes.get(positionListe)._polynom.set(positionArray - help, value);
 				minorCycle++;
 				majorCycle++;
 				if (minorCycle == Math.pow(p, n - positionArray)) {
@@ -270,8 +283,8 @@ public class Polynom {
 	@Override
 	public String toString() {
 		String polynom = "(";
-		for (int i = 0; i < _polynom.length; i++) {
-			polynom += (_polynom[i] + (((i + 1) == _polynom.length) ? "" : ","));
+		for (int i = 0; i < LENGHT; i++) {
+			polynom += (_polynom.get(i) + (((i + 1) == LENGHT) ? "" : ","));
 		}
 		polynom += ")";
 		return polynom;
@@ -282,11 +295,11 @@ public class Polynom {
 		if (obj instanceof Polynom) {
 			Polynom poly = (Polynom) obj;
 			if (MODULO == poly.MODULO) {
-				if (_polynom.length == poly._polynom.length) {
-					return Arrays.equals(_polynom, poly._polynom);
+				if (LENGHT == poly.LENGHT) {
+					return _polynom.equals(poly._polynom);
 				} else {
-					int[] a = this.getInvertedPolynom()._polynom;
-					int[] b = poly.getInvertedPolynom()._polynom;
+					Integer[] a = this.getInvertedPolynom()._polynom.toArray(new Integer[] {});
+					Integer[] b = poly.getInvertedPolynom()._polynom.toArray(new Integer[] {});
 					int maxDegree = Math.max(this.getDegree(), poly.getDegree()) + 1;
 					for (int i = 0; i < maxDegree; i++) {
 						if (a.length > i && b.length > i) {
