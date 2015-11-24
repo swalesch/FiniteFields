@@ -163,23 +163,13 @@ public class Polynom {
 		int restdegree = rest.getDegree();
 		while (restdegree >= p0degree) {
 
-			f._polynom[restdegree - p0degree] = modDivMod(p0._polynom[p0degree], rest._polynom[restdegree], p0.MODULO);
+			f._polynom[restdegree - p0degree] = p0._polynom[p0degree]
+					* PolynomUtil.getInversValue(rest._polynom[restdegree], p0.MODULO);
 			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
 			restdegree = rest.getDegree();
 		}
 
 		return rest;
-	}
-
-	@VisibleForTesting
-	static int modDivMod(int a, int b, int modulo) {
-		// a/b
-		for (int i = 0; i < Integer.MAX_VALUE; i++) {
-			if ((a + (long) i * (long) modulo) % b == 0) {
-				return (int) (((a + (long) i * (long) modulo) / b) % modulo);
-			}
-		}
-		throw new ArithmeticException();
 	}
 
 	private Polynom getInvertedPolynom() {

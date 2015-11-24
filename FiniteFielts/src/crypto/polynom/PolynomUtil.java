@@ -41,4 +41,16 @@ public class PolynomUtil {
 		}
 		return true;
 	}
+
+	/**
+	 * returns the Invers Value of a (a^-1)
+	 */
+	public static int getInversValue(int a, int modulo) {
+		for (int i = 1; i < modulo; i++) {
+			if ((i * a) % modulo == 1)
+				return i;
+		}
+		return 0;
+	}
+
 }

@@ -15,12 +15,12 @@ public class PolynomTest {
 		List<Polynom> allPolynomes = Polynom.createAllPolynomes(2, 2);
 
 		assertThat(allPolynomes).isNotEmpty();
-		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomp2n2());
+		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomP2N2());
 
 		allPolynomes = Polynom.createAllPolynomes(2, 3);
 
 		assertThat(allPolynomes).isNotEmpty();
-		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomp2n3());
+		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomP2N3());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -32,11 +32,11 @@ public class PolynomTest {
 	public void testCreateGeneratingPolynoms() {
 		List<Polynom> generatingPolynomes = Polynom.createGeneratingPolynomes(2, 2);
 		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomp2n2());
+		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N2());
 
 		generatingPolynomes = Polynom.createGeneratingPolynomes(2, 3);
 		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomp2n3());
+		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N3());
 	}
 
 	@Test
@@ -152,19 +152,7 @@ public class PolynomTest {
 						.isEqualTo(Polynom.createPolyFromArray(new int[] { 2 }, 3));
 	}
 
-	@Test
-	public void testModDiv() {
-		assertThat(Polynom.modDivMod(3, 2, 5)).isEqualTo(4);
-		assertThat(Polynom.modDivMod(4, 3, 5)).isEqualTo(3);
-		assertThat(Polynom.modDivMod(3, 3, 5)).isEqualTo(1);
-		assertThat(Polynom.modDivMod(2, 3, 5)).isEqualTo(4);
-		assertThat(Polynom.modDivMod(1, 3, 5)).isEqualTo(2);
-		assertThat(Polynom.modDivMod(1, 2, 3)).isEqualTo(2);
-		assertThat(Polynom.modDivMod(2, 1, 3)).isEqualTo(2);
-		assertThat(Polynom.modDivMod(5, 7, 13)).isEqualTo(10);
-	}
-
-	private static List<Polynom> getAllPolynomp2n2() {
+	private static List<Polynom> getAllPolynomP2N2() {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0 }, 2));
 		polys.add(Polynom.createPolyFromArray(new int[] { 0, 1 }, 2));
@@ -173,18 +161,18 @@ public class PolynomTest {
 		return polys;
 	}
 
-	private static List<Polynom> getGeneratingPolynomp2n2() {
+	private static List<Polynom> getGeneratingPolynomP2N2() {
 		return Arrays.asList(Polynom.createPolyFromArray(new int[] { 1, 1, 1 }, 2));
 	}
 
-	private static List<Polynom> getGeneratingPolynomp2n3() {
+	private static List<Polynom> getGeneratingPolynomP2N3() {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new int[] { 1, 0, 1, 1 }, 2));
 		polys.add(Polynom.createPolyFromArray(new int[] { 1, 1, 0, 1 }, 2));
 		return polys;
 	}
 
-	private static List<Polynom> getAllPolynomp2n3() {
+	private static List<Polynom> getAllPolynomP2N3() {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0, 0 }, 2));
 		polys.add(Polynom.createPolyFromArray(new int[] { 0, 0, 1 }, 2));
