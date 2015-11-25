@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 public class Polynom {
@@ -14,10 +13,6 @@ public class Polynom {
 
 	private enum PolynomCreator {
 		GENERATING_POLYNOM, ALL_POLYNOM
-	}
-
-	private enum Arithmetic {
-		ADD, MULTIPLY
 	}
 
 	/**
@@ -198,33 +193,13 @@ public class Polynom {
 		return nullPoints;
 	}
 
-	@VisibleForTesting
-	Polynom(int size, int p) {
-		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
-		_polynom = VectorPolynom.createVectorPolynom(size);
-		MODULO = p;
-	}
-
 	private Polynom getInvertedPolynom() {
 		return new Polynom(_polynom.createInverted(), MODULO);
 	}
 
-	private Polynom(int size, int p, int startValue) {
-		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
-		_polynom = VectorPolynom.createVectorPolynom(size);
-		_polynom.set(0, startValue);
-		MODULO = p;
-	}
-
-	private Polynom(VectorPolynom vp, int p) {
-		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
-		_polynom = vp;
-		MODULO = p;
-	}
-
 	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
 		Preconditions.checkNotNull(polynomCreator);
-
+	
 		List<Polynom> polynomes = new ArrayList<Polynom>();
 		int polynomCount = (int) Math.pow(p, n);
 		int help = 0;
@@ -241,12 +216,12 @@ public class Polynom {
 				throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
 			}
 		}
-
+	
 		int value = 0;
 		int minorCycle = 0;
 		int majorCycle = 0;
 		for (int positionArray = 1; positionArray <= n; positionArray++) {
-
+	
 			value = 0;
 			minorCycle = 0;
 			majorCycle = 0;
@@ -265,5 +240,24 @@ public class Polynom {
 			}
 		}
 		return polynomes;
+	}
+
+	private Polynom(int size, int p, int startValue) {
+		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
+		_polynom = VectorPolynom.createVectorPolynom(size);
+		_polynom.set(0, startValue);
+		MODULO = p;
+	}
+
+	private Polynom(VectorPolynom vp, int p) {
+		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
+		_polynom = vp;
+		MODULO = p;
+	}
+
+	private Polynom(int size, int p) {
+		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
+		_polynom = VectorPolynom.createVectorPolynom(size);
+		MODULO = p;
 	}
 }

@@ -12,17 +12,6 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 	private List<VectorPair> _vector;
 	private final int LENGHT;
 
-	private final Comparator<VectorPair> VECTOR_PAIR_COMPARATOR = new Comparator<VectorPair>() {
-
-		@Override
-		public int compare(VectorPair o1, VectorPair o2) {
-			if (o1.getIndex() >= o2.getIndex()) {
-				return 1;
-			}
-			return -1;
-		}
-	};
-
 	public static VectorPolynom createVectorPolynom(int lenght) {
 		return new VectorPolynom(lenght);
 	}
@@ -73,7 +62,16 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 
 				.filter(ele -> ele.getValue() > 0)
 
-				.min(VECTOR_PAIR_COMPARATOR);
+				.min(new Comparator<VectorPair>() {
+
+					@Override
+					public int compare(VectorPair o1, VectorPair o2) {
+						if (o1.getIndex() >= o2.getIndex()) {
+							return 1;
+						}
+						return -1;
+					}
+				});
 
 		if (min.isPresent()) {
 			return LENGHT - 1 - min.get().getIndex();
