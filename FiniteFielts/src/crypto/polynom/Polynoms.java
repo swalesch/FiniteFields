@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PolynomUtil {
+public class Polynoms {
 
 	/**
 	 * prints a List out of Polynomes
@@ -52,5 +52,4 @@ public class PolynomUtil {
 		}
 		return 0;
 	}
-
 }

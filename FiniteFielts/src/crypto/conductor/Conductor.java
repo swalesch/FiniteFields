@@ -3,7 +3,7 @@ package crypto.conductor;
 import java.util.List;
 
 import crypto.polynom.Polynom;
-import crypto.polynom.PolynomUtil;
+import crypto.polynom.Polynoms;
 
 public class Conductor {
 
@@ -13,7 +13,7 @@ public class Conductor {
 		// get generating Polynoms
 		List<Polynom> generatingPolynoms = Polynom.createGeneratingPolynomes(p, n);
 		System.out.println("Generierungspolynom:");
-		PolynomUtil.printPolys(generatingPolynoms);
+		Polynoms.printPolys(generatingPolynoms);
 		// Zahlenmenge erzeugen
 		// Rechentabelle erstellen
 

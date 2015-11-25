@@ -126,14 +126,6 @@ public class PolynomTest {
 	}
 
 	@Test
-	public void testDegree() {
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2).getDegree()).isEqualTo(1);
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 0, 1, 1 }, 2).getDegree()).isEqualTo(1);
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2).getDegree()).isEqualTo(2);
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 0, 0, 1 }, 2).getDegree()).isEqualTo(0);
-	}
-
-	@Test
 	public void testDivPolynom() {
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 2)
 				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2)))
