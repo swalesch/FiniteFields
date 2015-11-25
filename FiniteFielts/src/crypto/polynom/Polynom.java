@@ -25,16 +25,13 @@ public class Polynom {
 	 *         sized p^n
 	 */
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
-
-		// getKandidates
 		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
-		// filter by Nullpoints
+
 		return allGeneratingPolynomes.stream()
 
 				.filter(ele -> ele.getAllNullPoints().isEmpty())
 
 				.collect(Collectors.toCollection(ArrayList::new));
-
 	}
 
 	/**
@@ -76,6 +73,7 @@ public class Polynom {
 	 */
 	public Polynom calculateAddPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+
 		int maxDegree = Math.max(_polynom.getDegree(), polynom._polynom.getDegree()) + 1;
 		VectorPolynom vp3 = VectorPolynom.createVectorPolynom(maxDegree);
 		vp3.forEach(ele -> {
@@ -92,6 +90,7 @@ public class Polynom {
 	 */
 	public Polynom calculateMultiplyPolynom(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+
 		int maxDegree = _polynom.getDegree() + polynom._polynom.getDegree() + 1;
 		VectorPolynom vp3 = VectorPolynom.createVectorPolynom(maxDegree);
 		VectorPolynom vp2 = polynom._polynom.createInverted();
@@ -103,6 +102,7 @@ public class Polynom {
 						vp3.set(index, (vp3.getValue(index) + ele.getValue() * ele2.getValue()) % MODULO);
 					});
 				});
+
 		return createPolyFromVectorPolynom(vp3.createInverted(), MODULO);
 	}
 
@@ -111,15 +111,16 @@ public class Polynom {
 	 */
 	public Polynom calculateDividePolynomRest(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
+
 		Polynom p0 = polynom;
 		int max = Math.max(this._polynom.getDegree(), polynom._polynom.getDegree());
 		int min = Math.min(this._polynom.getDegree(), polynom._polynom.getDegree());
 		Polynom rest = this;
 		Polynom f = new Polynom((max - min + 1), MODULO);
+
 		// f*p0+rest == this
 		int p0degree = p0._polynom.getDegree();
 		int restdegree = rest._polynom.getDegree();
-
 		while (restdegree >= p0degree) {
 			f._polynom.set(restdegree - p0degree, p0._polynom.getValue(p0degree)
 					* Polynoms.getInversValue(rest._polynom.getValue(restdegree), p0.MODULO));
@@ -199,7 +200,7 @@ public class Polynom {
 
 	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
 		Preconditions.checkNotNull(polynomCreator);
-	
+
 		List<Polynom> polynomes = new ArrayList<Polynom>();
 		int polynomCount = (int) Math.pow(p, n);
 		int help = 0;
@@ -216,12 +217,11 @@ public class Polynom {
 				throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
 			}
 		}
-	
+
 		int value = 0;
 		int minorCycle = 0;
 		int majorCycle = 0;
 		for (int positionArray = 1; positionArray <= n; positionArray++) {
-	
 			value = 0;
 			minorCycle = 0;
 			majorCycle = 0;
