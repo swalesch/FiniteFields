@@ -21,8 +21,8 @@ public class Conductor {
 				709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809);
 		for (Integer integer : prim) {
 			TimeIt<List<Polynom>> timeIt = new TimeIt<List<Polynom>>();
-			System.out.print("For p = " + 277 + " it took ");
-			List<Polynom> genList = timeIt.printTime(() -> Polynom.createGeneratingPolynomes(277, n));
+			System.out.print("For p = " + integer + " it took ");
+			List<Polynom> genList = timeIt.printTime(() -> Polynom.createGeneratingPolynomes(integer, n));
 			System.out.print(" to find " + genList.size());
 			System.out.println();
 		}
