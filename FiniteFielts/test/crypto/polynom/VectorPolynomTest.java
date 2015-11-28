@@ -118,4 +118,15 @@ public class VectorPolynomTest {
 		assertThat(vp1.getValue(5)).isEqualTo(4);
 	}
 
+	@Test
+	public void testClone() {
+		VectorPolynom createVectorPolynomFromArray = VectorPolynom.createVectorPolynomFromArray(new Integer[] { 1, 1 });
+
+		VectorPolynom createVectorPolynom = VectorPolynom.createVectorPolynom(createVectorPolynomFromArray);
+		createVectorPolynom.set(0, 0);
+
+		assertThat(createVectorPolynom).isNotEqualTo(createVectorPolynomFromArray);
+
+	}
+
 }

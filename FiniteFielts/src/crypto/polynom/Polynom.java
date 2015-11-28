@@ -29,26 +29,54 @@ public class Polynom {
 	 *         sized p^n
 	 */
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
-		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n,
-				PolynomCreator.GENERATING_POLYNOM);
+		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
 
 		return allGeneratingPolynomes.stream()
 
-		.filter(ele -> ele.hasNullpoints())
+				.filter(ele -> ele.hasNullpoints())
 
-		.collect(Collectors.toList());
+				.collect(Collectors.toList());
+	}
+
+	public static List<Polynom> createGeneratingPolynomes2(int p, int n) {
+		List<Polynom> allGeneratingPolynomes = getPolynomes2(p, n, PolynomCreator.GENERATING_POLYNOM);
+
+		return allGeneratingPolynomes.stream()
+
+				.filter(ele -> ele.hasNullpoints())
+
+				.collect(Collectors.toList());
+	}
+
+	public static List<Polynom> createGeneratingPolynomes3(int p, int n) {
+		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
+
+		Polynom startPoly = new Polynom(n + 1, p, 1);
+		int polynomCount = (int) Math.pow(p, n - 1);
+
+		for (int i = 0; i <= polynomCount + 1; i++) {
+			if (startPoly.hasNullpoints()) {
+				allGeneratingPolynomes.add(new Polynom(startPoly));
+			}
+			startPoly.nextPoly();
+		}
+
+		return allGeneratingPolynomes;
 	}
 
 	public static Optional<Polynom> createOneGeneratingPolynomes(int p, int n) {
-		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n,
-				PolynomCreator.GENERATING_POLYNOM);
+		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
 
 		return allGeneratingPolynomes.stream()
 
-		.filter(ele -> ele.hasNullpoints())
+				.filter(ele -> ele.hasNullpoints())
 
-		.findFirst();
+				.findFirst();
 
+	}
+
+	public static Polynom createPolynome(Polynom poly) {
+		return new Polynom(poly);
 	}
 
 	/**
@@ -67,8 +95,7 @@ public class Polynom {
 	 * Create a new Polynom from int Array
 	 */
 	public static Polynom createPolyFromArray(Integer[] vector, int p) {
-		return new Polynom(VectorPolynom.createVectorPolynomFromArray(vector),
-				p);
+		return new Polynom(VectorPolynom.createVectorPolynomFromArray(vector), p);
 	}
 
 	/**
@@ -90,16 +117,13 @@ public class Polynom {
 	 * p. The modulo of both Polynoms has to be equal.
 	 */
 	public Polynom calculateAddPolynom(Polynom polynom) {
-		Preconditions.checkArgument(MODULO == polynom.MODULO,
-				"The given Polynoms are in different Modulo groups");
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 
-		int maxDegree = Math.max(_polynom.getDegree(),
-				polynom._polynom.getDegree()) + 1;
+		int maxDegree = Math.max(_polynom.getDegree(), polynom._polynom.getDegree()) + 1;
 		VectorPolynom vp3 = VectorPolynom.createVectorPolynom(maxDegree);
 		vp3.forEach(ele -> {
 			int index = ele.getIndex();
-			ele.setValue((_polynom.getValueOrZero(index) + polynom._polynom
-					.getValueOrZero(index)) % MODULO);
+			ele.setValue((_polynom.getValueOrZero(index) + polynom._polynom.getValueOrZero(index)) % MODULO);
 		});
 
 		return createPolyFromVectorPolynom(vp3, MODULO);
@@ -110,31 +134,19 @@ public class Polynom {
 	 * p. The modulo of both Polynoms has to be equal.
 	 */
 	public Polynom calculateMultiplyPolynom(Polynom polynom) {
-		Preconditions.checkArgument(MODULO == polynom.MODULO,
-				"The given Polynoms are in different Modulo groups");
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 
 		int maxDegree = _polynom.getDegree() + polynom._polynom.getDegree() + 1;
 		VectorPolynom vp3 = VectorPolynom.createVectorPolynom(maxDegree);
 		VectorPolynom vp2 = polynom._polynom.createInverted();
-		_polynom.createInverted()
-				.stream()
+		_polynom.createInverted().stream()
 
-				.filter(ele -> ele.getValue() != 0)
-				.forEach(
-						ele -> {
-							vp2.stream()
-									.filter(ele2 -> ele2.getValue() != 0)
-									.forEach(
-											ele2 -> {
-												int index = ele2.getIndex()
-														+ ele.getIndex();
-												vp3.set(index,
-														(vp3.getValue(index) + ele
-																.getValue()
-																* ele2.getValue())
-																% MODULO);
-											});
-						});
+				.filter(ele -> ele.getValue() != 0).forEach(ele -> {
+					vp2.stream().filter(ele2 -> ele2.getValue() != 0).forEach(ele2 -> {
+						int index = ele2.getIndex() + ele.getIndex();
+						vp3.set(index, (vp3.getValue(index) + ele.getValue() * ele2.getValue()) % MODULO);
+					});
+				});
 
 		return createPolyFromVectorPolynom(vp3.createInverted(), MODULO);
 	}
@@ -143,14 +155,11 @@ public class Polynom {
 	 * Returns the Rest as an Polynom of Polynom1/Polynom2
 	 */
 	public Polynom calculateDividePolynomRest(Polynom polynom) {
-		Preconditions.checkArgument(MODULO == polynom.MODULO,
-				"The given Polynoms are in different Modulo groups");
+		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
 
 		Polynom p0 = polynom;
-		int max = Math.max(this._polynom.getDegree(),
-				polynom._polynom.getDegree());
-		int min = Math.min(this._polynom.getDegree(),
-				polynom._polynom.getDegree());
+		int max = Math.max(this._polynom.getDegree(), polynom._polynom.getDegree());
+		int min = Math.min(this._polynom.getDegree(), polynom._polynom.getDegree());
 		Polynom rest = this;
 		Polynom f = new Polynom((max - min + 1), MODULO);
 
@@ -158,14 +167,9 @@ public class Polynom {
 		int p0degree = p0._polynom.getDegree();
 		int restdegree = rest._polynom.getDegree();
 		while (restdegree >= p0degree) {
-			f._polynom.set(
-					restdegree - p0degree,
-					p0._polynom.getValue(p0degree)
-							* Polynoms.getInversValue(
-									rest._polynom.getValue(restdegree),
-									p0.MODULO));
-			rest = this.calculateAddPolynom(f.getInvertedPolynom()
-					.calculateMultiplyPolynom(p0));
+			f._polynom.set(restdegree - p0degree, p0._polynom.getValue(p0degree)
+					* Polynoms.getInversValue(rest._polynom.getValue(restdegree), p0.MODULO));
+			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
 			restdegree = rest._polynom.getDegree();
 		}
 
@@ -176,8 +180,7 @@ public class Polynom {
 	public String toString() {
 		String polynom = "(";
 		for (int i = 0; i < _polynom.size(); i++) {
-			polynom += (_polynom.getValue(i) + (((i + 1) == _polynom.size()) ? ""
-					: ","));
+			polynom += (_polynom.getValue(i) + (((i + 1) == _polynom.size()) ? "" : ","));
 		}
 		polynom += ")";
 		return polynom;
@@ -188,15 +191,11 @@ public class Polynom {
 		if (obj instanceof Polynom) {
 			Polynom poly = (Polynom) obj;
 			if (MODULO == poly.MODULO) {
-				VectorPolynom max = _polynom.max(poly._polynom)
-						.createInverted();
-				VectorPolynom min = poly._polynom.min(_polynom)
-						.createInverted();
-				Optional<VectorPair> isNotEq = max
-						.stream()
+				VectorPolynom max = _polynom.max(poly._polynom).createInverted();
+				VectorPolynom min = poly._polynom.min(_polynom).createInverted();
+				Optional<VectorPair> isNotEq = max.stream()
 
-						.filter(ele -> ele.getValue() != min.getValueOrZero(ele
-								.getIndex()))
+						.filter(ele -> ele.getValue() != min.getValueOrZero(ele.getIndex()))
 
 						.findFirst();
 
@@ -229,13 +228,11 @@ public class Polynom {
 		for (int i = 0; i < MODULO; i++) {
 			final int input = i;
 			int lenght = _polynom.size();
-			int sum = _polynom
-					.stream()
+			int sum = _polynom.stream()
 
 					.filter(ele -> lenght - 1 != ele.getIndex())
 
-					.map(ele -> (int) Math.pow(ele.getValue() * input, lenght
-							- 1 - ele.getIndex()))
+					.map(ele -> (int) Math.pow(ele.getValue() * input, lenght - 1 - ele.getIndex()))
 
 					.reduce(0, (total, ele) -> total + ele);
 
@@ -257,12 +254,50 @@ public class Polynom {
 		return new Polynom(_polynom.createInverted(), MODULO);
 	}
 
-	// neue idee, Polynom +1 mit übertrag bei Modulo!! schrittweise zurückgeben
+	private static List<Polynom> getPolynomes2(int p, int n, PolynomCreator polynomCreator) {
+		List<Polynom> polynomes = new ArrayList<Polynom>();
+		int polynomCount;
+		Polynom startPoly;
+		switch (polynomCreator) {
+		case GENERATING_POLYNOM:
+			startPoly = new Polynom(n + 1, p, 1);
+			polynomCount = (int) Math.pow(p, n - 1);
+			break;
+		case ALL_POLYNOM:
+			startPoly = new Polynom(n, p);
+			polynomCount = (int) Math.pow(p, n);
+			break;
+		default:
+			throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
+		}
+
+		polynomes.add(new Polynom(startPoly));
+		for (int i = 0; i <= polynomCount; i++) {
+			polynomes.add(startPoly.nextPoly());
+		}
+
+		return polynomes;
+	}
+
+	public Polynom nextPoly() {
+		for (int i = _polynom.size() - 1; i >= 0; i--) {
+			Integer value = _polynom.getValue(i);
+			if ((value + 1) % MODULO == 0) {
+				_polynom.set(i, 0);
+			} else {
+				_polynom.set(i, value + 1);
+				break;
+			}
+		}
+		return new Polynom(this);
+	}
+
+	// neue idee, Polynom +1 mit übertrag bei Modulo!! schrittweise
+	// zurückgeben
 	// und
 	// nullstelle berechnen zum schnelleren generieren, besser eine 2.
 	// getPolynoms funktion schreiben zum testen
-	private static List<Polynom> getPolynomes(int p, int n,
-			PolynomCreator polynomCreator) {
+	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
 		Preconditions.checkNotNull(polynomCreator);
 
 		List<Polynom> polynomes = new ArrayList<Polynom>();
@@ -278,9 +313,7 @@ public class Polynom {
 				help = 1;
 				break;
 			default:
-				throw new IllegalArgumentException(
-						"The following Enum is not Implemented: "
-								+ polynomCreator.name());
+				throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
 			}
 		}
 
@@ -292,15 +325,13 @@ public class Polynom {
 			minorCycle = 0;
 			majorCycle = 0;
 			for (int positionListe = 0; positionListe < polynomCount; positionListe++) {
-				polynomes.get(positionListe)._polynom.set(positionArray - help,
-						value);
+				polynomes.get(positionListe)._polynom.set(positionArray - help, value);
 				minorCycle++;
 				majorCycle++;
 				if (minorCycle == Math.pow(p, n - positionArray)) {
 					value++;
 					minorCycle = 0;
-					if (positionArray > 1
-							&& majorCycle == Math.pow(p, n - positionArray + 1)) {
+					if (positionArray > 1 && majorCycle == Math.pow(p, n - positionArray + 1)) {
 						value = 0;
 						majorCycle = 0;
 					}
@@ -327,5 +358,10 @@ public class Polynom {
 		Preconditions.checkArgument(Polynoms.isPrime(p), "p has to be Prim");
 		_polynom = VectorPolynom.createVectorPolynom(size);
 		MODULO = p;
+	}
+
+	private Polynom(Polynom poly) {
+		_polynom = VectorPolynom.createVectorPolynom(poly._polynom);
+		MODULO = poly.MODULO;
 	}
 }

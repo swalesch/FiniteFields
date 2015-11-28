@@ -17,6 +17,11 @@ public class VectorPair {
 		_value = 0;
 	}
 
+	private VectorPair(VectorPair vp) {
+		INDEX = vp.INDEX;
+		_value = vp._value;
+	}
+
 	public int getIndex() {
 		return INDEX;
 	}
@@ -31,6 +36,10 @@ public class VectorPair {
 
 	public static VectorPair createPair(int index, int value) {
 		return new VectorPair(index, value);
+	}
+
+	public static VectorPair createPair(VectorPair vp) {
+		return new VectorPair(vp);
 	}
 
 	public static VectorPair createEmpty() {

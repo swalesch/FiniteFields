@@ -61,4 +61,13 @@ public class VectorPairTest {
 		assertThat(vectorPair2).isEqualTo(vectorPair3);
 		assertThat(vectorPair3).isEqualTo(vectorPair2);
 	}
+
+	@Test
+	public void testClone() {
+		VectorPair vectorPair = VectorPair.createPair(4, 7);
+		VectorPair createPair = VectorPair.createPair(vectorPair);
+		createPair.setValue(1);
+		assertThat(vectorPair.getValue()).isEqualTo(7);
+
+	}
 }

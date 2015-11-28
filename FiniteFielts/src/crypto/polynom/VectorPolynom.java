@@ -16,6 +16,10 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 		return new VectorPolynom(lenght);
 	}
 
+	public static VectorPolynom createVectorPolynom(VectorPolynom vp) {
+		return new VectorPolynom(vp);
+	}
+
 	public static VectorPolynom createVectorPolynomFromList(List<Integer> vector) {
 		VectorPolynom vectorPolynom = new VectorPolynom(vector.size());
 		vectorPolynom.forEach(ele -> ele.setValue(vector.get(ele.getIndex())));
@@ -100,15 +104,6 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 	}
 
 	/**
-	 * returns the gap between this.size - poly.size will be positive
-	 */
-	public Integer getGap(VectorPolynom poly) {
-		int gap = size() - poly.size();
-		gap = (gap < 0) ? gap * -1 : gap;
-		return gap;
-	}
-
-	/**
 	 * will return the VectorPair for index or Null if index not exists
 	 */
 	@Override
@@ -176,6 +171,14 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 		LENGHT = lenght;
 		_vector = new ArrayList<VectorPair>();
 		initVector();
+	}
+
+	private VectorPolynom(VectorPolynom vp) {
+		LENGHT = vp.LENGHT;
+		_vector = new ArrayList<VectorPair>();
+		for (VectorPair vPair : vp._vector) {
+			_vector.add(vPair.getIndex(), VectorPair.createPair(vPair));
+		}
 	}
 
 }
