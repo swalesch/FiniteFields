@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 public class Polynom {
@@ -164,6 +165,14 @@ public class Polynom {
 		return rest;
 	}
 
+	public boolean hasNullpoints() {
+		return getNullPoints(NullPoints.FIRST).isEmpty();
+	}
+
+	public List<Integer> getAllNullPoints() {
+		return getNullPoints(NullPoints.ALL);
+	}
+
 	@Override
 	public String toString() {
 		String polynom = "(";
@@ -196,12 +205,18 @@ public class Polynom {
 		return false;
 	}
 
-	public boolean hasNullpoints() {
-		return getNullPoints(NullPoints.FIRST).isEmpty();
-	}
-
-	public List<Integer> getAllNullPoints() {
-		return getNullPoints(NullPoints.ALL);
+	@VisibleForTesting
+	Polynom nextPoly() {
+		for (int i = _polynom.size() - 1; i >= 0; i--) {
+			Integer value = _polynom.getValue(i);
+			if ((value + 1) % MODULO == 0) {
+				_polynom.set(i, 0);
+			} else {
+				_polynom.set(i, value + 1);
+				break;
+			}
+		}
+		return new Polynom(this);
 	}
 
 	/**
@@ -211,7 +226,7 @@ public class Polynom {
 	 * @return List with numbers therfor the polynome becomes Zero, will return
 	 *         a empty List if there are no nullPoints
 	 */
-	List<Integer> getNullPoints(NullPoints nulls) {
+	private List<Integer> getNullPoints(NullPoints nulls) {
 		List<Integer> nullPoints = new ArrayList<Integer>();
 		for (int i = 0; i < MODULO; i++) {
 			final int input = i;
@@ -235,7 +250,6 @@ public class Polynom {
 			sum = 0;
 		}
 		return nullPoints;
-		// return nullPoints;
 	}
 
 	private Polynom getInvertedPolynom() {
@@ -265,19 +279,6 @@ public class Polynom {
 		}
 
 		return polynomes;
-	}
-
-	public Polynom nextPoly() {
-		for (int i = _polynom.size() - 1; i >= 0; i--) {
-			Integer value = _polynom.getValue(i);
-			if ((value + 1) % MODULO == 0) {
-				_polynom.set(i, 0);
-			} else {
-				_polynom.set(i, value + 1);
-				break;
-			}
-		}
-		return new Polynom(this);
 	}
 
 	private Polynom(int size, int p, int startValue) {

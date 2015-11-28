@@ -6,20 +6,16 @@ public class VectorPair {
 	private final int INDEX;
 	private int _value;
 
-	private VectorPair(int index, int value) {
-		Preconditions.checkArgument(index >= 0, "Index musst be 0 or greater!");
-		INDEX = index;
-		_value = value;
+	public static VectorPair createPair(int index, int value) {
+		return new VectorPair(index, value);
 	}
 
-	private VectorPair() {
-		INDEX = -1;
-		_value = 0;
+	public static VectorPair createPair(VectorPair vp) {
+		return new VectorPair(vp);
 	}
 
-	private VectorPair(VectorPair vp) {
-		INDEX = vp.INDEX;
-		_value = vp._value;
+	public static VectorPair createEmpty() {
+		return new VectorPair();
 	}
 
 	public int getIndex() {
@@ -32,18 +28,6 @@ public class VectorPair {
 
 	public void setValue(int value) {
 		_value = value;
-	}
-
-	public static VectorPair createPair(int index, int value) {
-		return new VectorPair(index, value);
-	}
-
-	public static VectorPair createPair(VectorPair vp) {
-		return new VectorPair(vp);
-	}
-
-	public static VectorPair createEmpty() {
-		return new VectorPair();
 	}
 
 	/**
@@ -76,5 +60,21 @@ public class VectorPair {
 	@Override
 	public String toString() {
 		return "(" + INDEX + "," + _value + ")";
+	}
+
+	private VectorPair(VectorPair vp) {
+		INDEX = vp.INDEX;
+		_value = vp._value;
+	}
+
+	private VectorPair(int index, int value) {
+		Preconditions.checkArgument(index >= 0, "Index musst be 0 or greater!");
+		INDEX = index;
+		_value = value;
+	}
+
+	private VectorPair() {
+		INDEX = -1;
+		_value = 0;
 	}
 }
