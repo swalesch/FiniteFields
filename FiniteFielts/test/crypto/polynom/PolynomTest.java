@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import crypto.time.measurement.TimeIt;
-
 public class PolynomTest {
 
 	@Test
@@ -39,6 +37,11 @@ public class PolynomTest {
 		generatingPolynomes = Polynom.createGeneratingPolynomes(2, 3);
 		assertThat(generatingPolynomes).isNotEmpty();
 		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N3());
+
+		generatingPolynomes = Polynom.createGeneratingPolynomes(3, 3);
+		assertThat(generatingPolynomes).isNotEmpty();
+		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP3N3());
+
 	}
 
 	@Test
@@ -168,17 +171,6 @@ public class PolynomTest {
 		assertThat(poly).isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0, 0, 0 }, 2));
 	}
 
-	@Test
-	public void testCreateGeneratingPolynoms2() {
-		List<Polynom> generatingPolynomes = Polynom.createGeneratingPolynomes2(2, 2);
-		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N2());
-
-		generatingPolynomes = Polynom.createGeneratingPolynomes2(2, 3);
-		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N3());
-	}
-
 	private static List<Polynom> getAllPolynomP2N2() {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 0, 0 }, 2));
@@ -196,6 +188,13 @@ public class PolynomTest {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1, 1 }, 2));
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0, 1 }, 2));
+		return polys;
+	}
+
+	private static List<Polynom> getGeneratingPolynomP3N3() {
+		List<Polynom> polys = new ArrayList<Polynom>();
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 0, 2, 1 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 0, 2, 2 }, 3));
 		return polys;
 	}
 
@@ -222,17 +221,5 @@ public class PolynomTest {
 		assertThat(createPolynome2).isEqualTo(createPolyFromArray);
 		assertThat(createPolynome).isNotEqualTo(createPolynome2);
 
-	}
-
-	@Test
-	public void testSpeed() {
-		Integer printTime2 = TimeIt.printTime2(() -> Polynom.createGeneratingPolynomes3(239, 3).size());
-		System.out.println(printTime2);
-		System.out.println();
-		// TimeIt.printTime2(() -> Polynom.createGeneratingPolynomes(239, 2));
-		System.out.println();
-		// TimeIt.printTime2(() -> Polynom.createGeneratingPolynomes2(239, 2));
-		printTime2 = TimeIt.printTime2(() -> Polynom.createGeneratingPolynomes2(239, 3).size());
-		System.out.println(printTime2);
 	}
 }

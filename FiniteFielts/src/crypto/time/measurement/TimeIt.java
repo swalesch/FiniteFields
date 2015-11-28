@@ -6,13 +6,12 @@ import java.util.stream.IntStream;
 
 public class TimeIt {
 
-	public static <T> T printTime2(Callable<T> task) {
+	public static <T> T printTime(Callable<T> task) {
 		long startTime = System.currentTimeMillis();
 		T call = null;
 		try {
 			call = task.call();
-			System.out.print((System.currentTimeMillis() - startTime) / 1000d
-					+ "s");
+			System.out.print((System.currentTimeMillis() - startTime) / 1000d + "s");
 		} catch (Exception e) {
 			System.err.println("Faild");
 			e.printStackTrace();
@@ -24,8 +23,7 @@ public class TimeIt {
 		return (t) -> {
 			long startTime = System.currentTimeMillis();
 			R apply = task.apply(t);
-			System.out.print((System.currentTimeMillis() - startTime) / 1000d
-					+ "s");
+			System.out.print((System.currentTimeMillis() - startTime) / 1000d + "s");
 			return apply;
 		};
 	}

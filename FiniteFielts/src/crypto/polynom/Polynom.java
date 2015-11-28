@@ -3,7 +3,6 @@ package crypto.polynom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
@@ -29,30 +28,10 @@ public class Polynom {
 	 *         sized p^n
 	 */
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
-		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
-
-		return allGeneratingPolynomes.stream()
-
-				.filter(ele -> ele.hasNullpoints())
-
-				.collect(Collectors.toList());
-	}
-
-	public static List<Polynom> createGeneratingPolynomes2(int p, int n) {
-		List<Polynom> allGeneratingPolynomes = getPolynomes2(p, n, PolynomCreator.GENERATING_POLYNOM);
-
-		return allGeneratingPolynomes.stream()
-
-				.filter(ele -> ele.hasNullpoints())
-
-				.collect(Collectors.toList());
-	}
-
-	public static List<Polynom> createGeneratingPolynomes3(int p, int n) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
 		Polynom startPoly = new Polynom(n + 1, p, 1);
-		int polynomCount = (int) Math.pow(p, n - 1);
+		long polynomCount = (long) Math.pow(p, n - 1);
 
 		for (int i = 0; i <= polynomCount + 1; i++) {
 			if (startPoly.hasNullpoints()) {
@@ -64,14 +43,23 @@ public class Polynom {
 		return allGeneratingPolynomes;
 	}
 
-	public static Optional<Polynom> createOneGeneratingPolynomes(int p, int n) {
-		List<Polynom> allGeneratingPolynomes = getPolynomes(p, n, PolynomCreator.GENERATING_POLYNOM);
+	public static List<Polynom> createXGeneratingPolynome(int p, int n, int x) {
+		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
-		return allGeneratingPolynomes.stream()
+		Polynom startPoly = new Polynom(n + 1, p, 1);
+		long polynomCount = (long) Math.pow(p, n - 1);
 
-				.filter(ele -> ele.hasNullpoints())
+		for (int i = 0; i <= polynomCount + 1; i++) {
+			if (startPoly.hasNullpoints()) {
+				allGeneratingPolynomes.add(new Polynom(startPoly));
+				if (allGeneratingPolynomes.size() == x) {
+					return allGeneratingPolynomes;
+				}
+			}
+			startPoly.nextPoly();
+		}
 
-				.findFirst();
+		return allGeneratingPolynomes;
 
 	}
 
@@ -254,7 +242,7 @@ public class Polynom {
 		return new Polynom(_polynom.createInverted(), MODULO);
 	}
 
-	private static List<Polynom> getPolynomes2(int p, int n, PolynomCreator polynomCreator) {
+	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
 		List<Polynom> polynomes = new ArrayList<Polynom>();
 		int polynomCount;
 		Polynom startPoly;
@@ -290,55 +278,6 @@ public class Polynom {
 			}
 		}
 		return new Polynom(this);
-	}
-
-	// neue idee, Polynom +1 mit übertrag bei Modulo!! schrittweise
-	// zurückgeben
-	// und
-	// nullstelle berechnen zum schnelleren generieren, besser eine 2.
-	// getPolynoms funktion schreiben zum testen
-	private static List<Polynom> getPolynomes(int p, int n, PolynomCreator polynomCreator) {
-		Preconditions.checkNotNull(polynomCreator);
-
-		List<Polynom> polynomes = new ArrayList<Polynom>();
-		int polynomCount = (int) Math.pow(p, n);
-		int help = 0;
-		for (int i = 0; i < polynomCount; i++) {
-			switch (polynomCreator) {
-			case GENERATING_POLYNOM:
-				polynomes.add(new Polynom(n + 1, p, 1));
-				break;
-			case ALL_POLYNOM:
-				polynomes.add(new Polynom(n, p));
-				help = 1;
-				break;
-			default:
-				throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
-			}
-		}
-
-		int value = 0;
-		int minorCycle = 0;
-		int majorCycle = 0;
-		for (int positionArray = 1; positionArray <= n; positionArray++) {
-			value = 0;
-			minorCycle = 0;
-			majorCycle = 0;
-			for (int positionListe = 0; positionListe < polynomCount; positionListe++) {
-				polynomes.get(positionListe)._polynom.set(positionArray - help, value);
-				minorCycle++;
-				majorCycle++;
-				if (minorCycle == Math.pow(p, n - positionArray)) {
-					value++;
-					minorCycle = 0;
-					if (positionArray > 1 && majorCycle == Math.pow(p, n - positionArray + 1)) {
-						value = 0;
-						majorCycle = 0;
-					}
-				}
-			}
-		}
-		return polynomes;
 	}
 
 	private Polynom(int size, int p, int startValue) {
