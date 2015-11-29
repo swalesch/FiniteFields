@@ -44,6 +44,15 @@ public class Polynom {
 		return allGeneratingPolynomes;
 	}
 
+	/**
+	 * @param p
+	 *            has to be a Prim number, is represending the modulo Value for
+	 *            the Polynoms
+	 * @param n
+	 *            has to be a number, is represending the degree of the Polynoms
+	 * @return a List out of X or all possible Polynoms to generate a modulo
+	 *         Field sized p^n
+	 */
 	public static List<Polynom> createXGeneratingPolynome(int p, int n, int x) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
@@ -101,6 +110,14 @@ public class Polynom {
 		return new Polynom(vp, p);
 	}
 
+	public VectorPolynom getVector() {
+		return _polynom;
+	}
+
+	public int getModulo() {
+		return MODULO;
+	}
+
 	/**
 	 * returns a new Polynom that is calculated be (Polynom1 + Polynom2) modulo
 	 * p. The modulo of both Polynoms has to be equal.
@@ -110,12 +127,14 @@ public class Polynom {
 
 		int maxDegree = Math.max(_polynom.getDegree(), polynom._polynom.getDegree()) + 1;
 		VectorPolynom vp3 = VectorPolynom.createVectorPolynom(maxDegree);
+		VectorPolynom a = _polynom.createInverted();
+		VectorPolynom b = polynom._polynom.createInverted();
 		vp3.forEach(ele -> {
 			int index = ele.getIndex();
-			ele.setValue((_polynom.getValueOrZero(index) + polynom._polynom.getValueOrZero(index)) % MODULO);
+			ele.setValue((a.getValueOrZero(index) + b.getValueOrZero(index)) % MODULO);
 		});
 
-		return createPolyFromVectorPolynom(vp3, MODULO);
+		return createPolyFromVectorPolynom(vp3.createInverted(), MODULO);
 	}
 
 	/**
@@ -150,15 +169,23 @@ public class Polynom {
 		int max = Math.max(this._polynom.getDegree(), polynom._polynom.getDegree());
 		int min = Math.min(this._polynom.getDegree(), polynom._polynom.getDegree());
 		Polynom rest = this;
-		Polynom f = new Polynom((max - min + 1), MODULO);
+		Polynom f = new Polynom((max - min) + 1, MODULO);
 
 		// f*p0+rest == this
 		int p0degree = p0._polynom.getDegree();
 		int restdegree = rest._polynom.getDegree();
 		while (restdegree >= p0degree) {
-			f._polynom.set(restdegree - p0degree, p0._polynom.getValue(p0degree)
-					* Polynoms.getInversValue(rest._polynom.getValue(restdegree), p0.MODULO));
-			rest = this.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
+			// m * Rest(x) / n * P0(x) = k * f(x)
+			// m + n*k = 0 -> -m / n = k
+			// k = -m*nInvers
+			int m = Polynoms.getPositivValue(-rest._polynom.getValue(rest._polynom.size() - (restdegree + 1)), MODULO);
+			int nInvers = Polynoms.getInversValue((p0._polynom.getValue(p0._polynom.size() - (p0degree + 1))), MODULO);
+			f._polynom.set(restdegree - p0degree, m * nInvers);
+			rest = rest.calculateAddPolynom(f.getInvertedPolynom().calculateMultiplyPolynom(p0));
+
+			// reset f
+			f._polynom.set(restdegree - p0degree, 0);
+
 			restdegree = rest._polynom.getDegree();
 		}
 
@@ -263,18 +290,18 @@ public class Polynom {
 		switch (polynomCreator) {
 		case GENERATING_POLYNOM:
 			startPoly = new Polynom(n + 1, p, 1);
-			polynomCount = (int) Math.pow(p, n - 1);
+			polynomCount = (int) Math.pow(p, n - 1) + 1;
 			break;
 		case ALL_POLYNOM:
 			startPoly = new Polynom(n, p);
-			polynomCount = (int) Math.pow(p, n);
+			polynomCount = (int) Math.pow(p, n) - 1;
 			break;
 		default:
 			throw new IllegalArgumentException("The following Enum is not Implemented: " + polynomCreator.name());
 		}
 
 		polynomes.add(new Polynom(startPoly));
-		for (int i = 0; i <= polynomCount; i++) {
+		for (int i = 0; i < polynomCount; i++) {
 			polynomes.add(startPoly.nextPoly());
 		}
 

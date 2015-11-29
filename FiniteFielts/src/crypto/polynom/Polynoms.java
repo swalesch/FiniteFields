@@ -52,4 +52,13 @@ public class Polynoms {
 		}
 		return 0;
 	}
+
+	public static int getPositivValue(int value, int modulo) {
+		int positivValue = value % modulo;
+		if (positivValue == 0) {
+			return positivValue;
+		} else {
+			return positivValue + modulo;
+		}
+	}
 }

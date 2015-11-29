@@ -15,12 +15,12 @@ public class PolynomTest {
 		List<Polynom> allPolynomes = Polynom.createAllPolynomes(2, 2);
 
 		assertThat(allPolynomes).isNotEmpty();
-		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomP2N2());
+		assertThat(allPolynomes).containsExactlyElementsOf(getAllPolynomP2N2());
 
 		allPolynomes = Polynom.createAllPolynomes(2, 3);
 
 		assertThat(allPolynomes).isNotEmpty();
-		assertThat(allPolynomes).containsOnlyElementsOf(getAllPolynomP2N3());
+		assertThat(allPolynomes).containsExactlyElementsOf(getAllPolynomP2N3());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -32,15 +32,15 @@ public class PolynomTest {
 	public void testCreateGeneratingPolynoms() {
 		List<Polynom> generatingPolynomes = Polynom.createGeneratingPolynomes(2, 2);
 		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N2());
+		assertThat(generatingPolynomes).containsExactlyElementsOf(getGeneratingPolynomP2N2());
 
 		generatingPolynomes = Polynom.createGeneratingPolynomes(2, 3);
 		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP2N3());
+		assertThat(generatingPolynomes).containsExactlyElementsOf(getGeneratingPolynomP2N3());
 
 		generatingPolynomes = Polynom.createGeneratingPolynomes(3, 3);
 		assertThat(generatingPolynomes).isNotEmpty();
-		assertThat(generatingPolynomes).containsOnlyElementsOf(getGeneratingPolynomP3N3());
+		assertThat(generatingPolynomes).containsExactlyElementsOf(getGeneratingPolynomP3N3());
 
 	}
 
@@ -56,6 +56,14 @@ public class PolynomTest {
 
 	@Test
 	public void testAddPolynom() {
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3)
+				.calculateAddPolynom(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2 }, 3));
+
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3)
+				.calculateAddPolynom(Polynom.createPolyFromArray(new Integer[] { 1, 0, 2 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0 }, 3));
+
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 2)
 				.calculateAddPolynom(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2));
@@ -83,6 +91,10 @@ public class PolynomTest {
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2 }, 3)
 				.calculateAddPolynom(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 3)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2, 0 }, 3));
+
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0, 0 }, 2)
+				.calculateAddPolynom(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 2));
 
 	}
 
@@ -112,6 +124,14 @@ public class PolynomTest {
 				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new Integer[] { 2, 1 }, 3)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3));
 
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 2)
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 2)
+				.calculateMultiplyPolynom(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2));
+
 	}
 
 	@Test
@@ -132,6 +152,18 @@ public class PolynomTest {
 
 	@Test
 	public void testDivPolynom() {
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2 }, 3));
+
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1, 1 }, 2)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2));
+
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2));
+
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 2)
 				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 2));
@@ -140,13 +172,6 @@ public class PolynomTest {
 				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2));
 
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1, 1 }, 2)
-				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1, 1 }, 2)))
-						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2));
-
-		assertThat(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3)
-				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 3)))
-						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2 }, 3));
 	}
 
 	@Test
@@ -169,6 +194,18 @@ public class PolynomTest {
 
 		poly.nextPoly();
 		assertThat(poly).isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0, 0, 0 }, 2));
+	}
+
+	@Test
+	public void testClone() {
+		Polynom createPolyFromArray = Polynom.createPolyFromArray(new Integer[] { 0, 0, 0 }, 2);
+		Polynom createPolynome = Polynom.createPolynome(createPolyFromArray.nextPoly());
+		assertThat(createPolyFromArray).isEqualTo(createPolynome);
+
+		Polynom createPolynome2 = Polynom.createPolynome(createPolyFromArray.nextPoly());
+		assertThat(createPolynome2).isEqualTo(createPolyFromArray);
+		assertThat(createPolynome).isNotEqualTo(createPolynome2);
+
 	}
 
 	private static List<Polynom> getAllPolynomP2N2() {
@@ -209,17 +246,5 @@ public class PolynomTest {
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0 }, 2));
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2));
 		return polys;
-	}
-
-	@Test
-	public void testClone() {
-		Polynom createPolyFromArray = Polynom.createPolyFromArray(new Integer[] { 0, 0, 0 }, 2);
-		Polynom createPolynome = Polynom.createPolynome(createPolyFromArray.nextPoly());
-		assertThat(createPolyFromArray).isEqualTo(createPolynome);
-
-		Polynom createPolynome2 = Polynom.createPolynome(createPolyFromArray.nextPoly());
-		assertThat(createPolynome2).isEqualTo(createPolyFromArray);
-		assertThat(createPolynome).isNotEqualTo(createPolynome2);
-
 	}
 }
