@@ -156,7 +156,7 @@ public class Polynom {
 					});
 				});
 
-		return createPolyFromVectorPolynom(vp3.createInverted(), MODULO);
+		return createPolyFromVectorPolynom(vp3.createInverted().createReducedVectorPolynom(), MODULO);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class Polynom {
 			restdegree = rest._polynom.getDegree();
 		}
 
-		return rest;
+		return createPolyFromVectorPolynom(rest._polynom.createReducedVectorPolynom(), MODULO);
 	}
 
 	public boolean hasNullpoints() {

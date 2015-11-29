@@ -129,4 +129,17 @@ public class VectorPolynomTest {
 
 	}
 
+	@Test
+	public void testReducePoly() {
+		assertThat(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 0, 1, 1 }).createReducedVectorPolynom())
+				.isEqualTo(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 1, 1 }));
+
+		assertThat(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 0, 0, 0 }).createReducedVectorPolynom())
+				.isEqualTo(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 0 }));
+
+		assertThat(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 1, 0, 0 }).createReducedVectorPolynom())
+				.isEqualTo(VectorPolynom.createVectorPolynomFromArray(new Integer[] { 1, 0, 0 }));
+
+	}
+
 }

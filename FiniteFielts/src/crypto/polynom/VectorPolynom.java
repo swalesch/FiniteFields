@@ -32,6 +32,26 @@ public class VectorPolynom extends AbstractList<VectorPair> {
 		return vectorPolynom;
 	}
 
+	/**
+	 * returns a new Polynom if degree != Lenght-1, it will deleate all 0 Values
+	 * befor the first Value that is !=0; otherwise it returns itself
+	 */
+	public VectorPolynom createReducedVectorPolynom() {
+		int degree = getDegree();
+		if (degree != LENGHT - 1) {
+			VectorPolynom canceledPoly = createVectorPolynom(degree + 1);
+			List<VectorPair> subList = _vector.subList(LENGHT - 1 - degree, LENGHT);
+
+			int i = 0;
+			for (VectorPair vp : subList) {
+				canceledPoly.set(i, vp.getValue());
+				i++;
+			}
+			return canceledPoly;
+		}
+		return this;
+	}
+
 	public VectorPolynom createInverted() {
 		VectorPolynom invertedVectorPolynom = createVectorPolynom(LENGHT);
 		_vector.forEach(ele -> invertedVectorPolynom.set(LENGHT - 1 - ele.getIndex(), ele.getValue()));
