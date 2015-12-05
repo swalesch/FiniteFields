@@ -1,6 +1,7 @@
 package crypto.polynom;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,6 +148,17 @@ public class PolynomTest {
 
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 2))
 				.isNotEqualTo(Polynom.createPolyFromArray(new Integer[] { 0 }, 2));
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1 }, 2))
+				.isNotEqualTo(
+						Polynom.createPolyFromArray(new Integer[] { 0 }, 2));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 }, 2))
+				.isNotEqualTo(
+						Polynom.createPolyFromArray(new Integer[] { 1 }, 2));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1 }, 2))
+				.isNotEqualTo(
+						Polynom.createPolyFromArray(new Integer[] { 1 }, 3));
 
 	}
 
@@ -246,5 +258,23 @@ public class PolynomTest {
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0 }, 2));
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2));
 		return polys;
+	}
+
+	@Test
+	public void testGenericPolysIrreduzible() {
+		int p=3,n=4;
+		List<Polynom> generatingPolynomes = Polynom.createGeneratingPolynomes(p, n);
+		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
+		for (int i = 0; i < p; i++) {
+			allPolynomes.remove(0);
+		}
+		for (Polynom allpolynom : allPolynomes) {
+			for (Polynom generating : generatingPolynomes) {
+				if (generating.calculateDividePolynomRest(allpolynom).equals(Polynom.createPolyFromArray(new Integer[] { 0 }, p))) {
+					fail(generating + " is a reduzible Polymon with " + allpolynom);
+				}
+			}
+		}
+
 	}
 }

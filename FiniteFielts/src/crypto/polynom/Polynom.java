@@ -31,12 +31,26 @@ public class Polynom {
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
+		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
+		//Remove all Polys with Degree == 0
+		for (int i = 0; i < p; i++) {
+			allPolynomes.remove(0);
+		}
+		int allPolySize = allPolynomes.size();
 		Polynom startPoly = new Polynom(n + 1, p, 1);
 		long polynomCount = (long) Math.pow(p, n - 1);
 
 		for (int i = 0; i <= polynomCount + 1; i++) {
-			if (startPoly.hasNullpoints()) {
-				allGeneratingPolynomes.add(new Polynom(startPoly));
+			if (!startPoly.hasNullpoints()) {
+				for (int j = 0; j <  allPolySize; j++) {
+					if (!startPoly.calculateDividePolynomRest(allPolynomes.get(j)).equals(Polynom.createPolyFromArray(new Integer[] { 0 }, p))) {
+						if(j+1 == allPolySize){
+							allGeneratingPolynomes.add(new Polynom(startPoly));
+						}
+					}else{
+						break;
+					}
+				}
 			}
 			startPoly.nextPoly();
 		}
@@ -58,12 +72,25 @@ public class Polynom {
 
 		Polynom startPoly = new Polynom(n + 1, p, 1);
 		long polynomCount = (long) Math.pow(p, n - 1);
-
+		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
+		//Remove all Polys with Degree == 0
+		for (int i = 0; i < p; i++) {
+			allPolynomes.remove(0);
+		}
+		int allPolySize = allPolynomes.size();
 		for (int i = 0; i <= polynomCount + 1; i++) {
-			if (startPoly.hasNullpoints()) {
-				allGeneratingPolynomes.add(new Polynom(startPoly));
-				if (allGeneratingPolynomes.size() == x) {
-					return allGeneratingPolynomes;
+			if (!startPoly.hasNullpoints()) {
+				for (int j = 0; j <  allPolySize; j++) {
+					if (!startPoly.calculateDividePolynomRest(allPolynomes.get(j)).equals(Polynom.createPolyFromArray(new Integer[] { 0 }, p))) {
+						if(j+1 == allPolySize){
+							allGeneratingPolynomes.add(new Polynom(startPoly));
+							if (allGeneratingPolynomes.size() == x) {
+								return allGeneratingPolynomes;
+							}
+						}
+					}else{
+						break;
+					}
 				}
 			}
 			startPoly.nextPoly();
@@ -164,7 +191,8 @@ public class Polynom {
 	 */
 	public Polynom calculateDividePolynomRest(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
-
+		Preconditions.checkArgument(polynom._polynom.getDegree()>0, "The given Polynom is just a Number.");
+		
 		Polynom p0 = polynom;
 		int max = Math.max(this._polynom.getDegree(), polynom._polynom.getDegree());
 		int min = Math.min(this._polynom.getDegree(), polynom._polynom.getDegree());
@@ -193,7 +221,7 @@ public class Polynom {
 	}
 
 	public boolean hasNullpoints() {
-		return getNullPoints(NullPoints.FIRST).isEmpty();
+		return !getNullPoints(NullPoints.FIRST).isEmpty();
 	}
 
 	public List<Integer> getAllNullPoints() {

@@ -64,4 +64,12 @@ public class FieldTest {
 		assertThat(field.isPointInField(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 2))).isFalse();
 		assertThat(field.isPointInField(Polynom.createPolyFromArray(new Integer[] { 0, 1 }, 3))).isFalse();
 	}
+	
+	@Test
+	public void tesTest(){
+		Polynom generatingPolynom = Polynom.createXGeneratingPolynome(2, 2, 1).get(0);
+		Field field = Field.createField(generatingPolynom);
+		System.out.println("Generating: "+generatingPolynom+"\n");
+		System.out.println(field.toString());
+	}
 }

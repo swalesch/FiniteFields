@@ -21,7 +21,7 @@ public class Field {
 	 *            has to be a polynom without 0 points
 	 */
 	public static Field createField(Polynom generatingPolynom) {
-		Preconditions.checkArgument(generatingPolynom.hasNullpoints(), "generatingPolynom has at least one null point");
+		Preconditions.checkArgument(!generatingPolynom.hasNullpoints(), "generatingPolynom has at least one null point");
 		List<Polynom> allElements = Polynom.createAllPolynomes(generatingPolynom.getModulo(),
 				generatingPolynom.getVector().getDegree());
 		Field field = new Field(allElements, generatingPolynom);
@@ -58,9 +58,19 @@ public class Field {
 	public String toString() {
 		String string = "all Elements:\n" + _allElements.toString();
 		string += "\n\nadd Table:\n";
+		int Genlength = GENERATING_POLYNOM.toString().length();
 		for (int i = 0; i < _addTable.get(0).size(); i++) {
 			for (int j = 0; j < _addTable.size(); j++) {
-				string += _addTable.get(j).get(i).toString() + " ";
+				String vector = _addTable.get(j).get(i).toString();
+				if(vector.length()<=Genlength-2){
+					String help="";
+					int neededSpaces = Genlength-2-vector.length();
+					for (int k = 0; k < neededSpaces; k++) {
+						help+=" ";
+					}
+					vector = help+vector;
+				}
+				string += vector + "  ";
 			}
 			string += "\n";
 		}
@@ -70,7 +80,17 @@ public class Field {
 		string += "\n\nmulti Table:\n";
 		for (int i = 0; i < _multiTable.get(0).size(); i++) {
 			for (int j = 0; j < _multiTable.size(); j++) {
-				string += _multiTable.get(j).get(i).toString() + " ";
+				
+				String vector = _multiTable.get(j).get(i).toString();
+				if(vector.length()<=Genlength-2){
+					String help="";
+					int neededSpaces = Genlength-2-vector.length();
+					for (int k = 0; k < neededSpaces; k++) {
+						help+=" ";
+					}
+					vector = help+vector;
+				}
+				string += vector + "  ";
 			}
 			string += "\n";
 		}
