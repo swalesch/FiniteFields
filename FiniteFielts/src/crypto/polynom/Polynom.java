@@ -31,73 +31,51 @@ public class Polynom {
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
-		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
-		//Remove all Polys with Degree == 0
-		for (int i = 0; i < p; i++) {
-			allPolynomes.remove(0);
-		}
-		int allPolySize = allPolynomes.size();
-		Polynom startPoly = new Polynom(n + 1, p, 1);
-		long polynomCount = (long) Math.pow(p, n - 1);
-
-		for (int i = 0; i <= polynomCount + 1; i++) {
-			if (!startPoly.hasNullpoints()) {
-				for (int j = 0; j <  allPolySize; j++) {
-					if (!startPoly.calculateDividePolynomRest(allPolynomes.get(j)).equals(Polynom.createPolyFromArray(new Integer[] { 0 }, p))) {
-						if(j+1 == allPolySize){
-							allGeneratingPolynomes.add(new Polynom(startPoly));
-						}
-					}else{
-						break;
-					}
-				}
+		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n+1);
+		firstCandidate.set(0, 1);
+		Polynom startingPoly = Polynom.createPolyFromVectorPolynom(firstCandidate, p);
+		
+		while(startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0)==1){
+			if(!startingPoly.hasZeroDivisor()){
+				allGeneratingPolynomes.add(Polynom.createPolynome(startingPoly));
 			}
-			startPoly.nextPoly();
+			startingPoly.nextPoly();
 		}
-
+		
 		return allGeneratingPolynomes;
 	}
-
+	
 	/**
 	 * @param p
 	 *            has to be a Prim number, is represending the modulo Value for
 	 *            the Polynoms
 	 * @param n
 	 *            has to be a number, is represending the degree of the Polynoms
-	 * @return a List out of X or all possible Polynoms to generate a modulo
-	 *         Field sized p^n
+	 * @param x   
+	 * 			  represents the max number of created polynoms
+	 * 			  it always returns only as much as existing
+	 * @return 
+	 * 			  a List out of X or all possible Polynoms to generate a modulo
+	 *            Field sized p^n
 	 */
 	public static List<Polynom> createXGeneratingPolynome(int p, int n, int x) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
-		Polynom startPoly = new Polynom(n + 1, p, 1);
-		long polynomCount = (long) Math.pow(p, n - 1);
-		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
-		//Remove all Polys with Degree == 0
-		for (int i = 0; i < p; i++) {
-			allPolynomes.remove(0);
-		}
-		int allPolySize = allPolynomes.size();
-		for (int i = 0; i <= polynomCount + 1; i++) {
-			if (!startPoly.hasNullpoints()) {
-				for (int j = 0; j <  allPolySize; j++) {
-					if (!startPoly.calculateDividePolynomRest(allPolynomes.get(j)).equals(Polynom.createPolyFromArray(new Integer[] { 0 }, p))) {
-						if(j+1 == allPolySize){
-							allGeneratingPolynomes.add(new Polynom(startPoly));
-							if (allGeneratingPolynomes.size() == x) {
-								return allGeneratingPolynomes;
-							}
-						}
-					}else{
-						break;
-					}
+		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n+1);
+		firstCandidate.set(0, 1);
+		Polynom startingPoly = Polynom.createPolyFromVectorPolynom(firstCandidate, p);
+		
+		while(startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0)==1){
+			if(!startingPoly.hasZeroDivisor()){
+				allGeneratingPolynomes.add(Polynom.createPolynome(startingPoly));
+				if(allGeneratingPolynomes.size()==x){
+					return allGeneratingPolynomes;
 				}
 			}
-			startPoly.nextPoly();
+			startingPoly.nextPoly();
 		}
-
+		
 		return allGeneratingPolynomes;
-
 	}
 
 	public static Polynom createPolynome(Polynom poly) {
@@ -137,6 +115,10 @@ public class Polynom {
 		return new Polynom(vp, p);
 	}
 
+	public void reducePolynom(){
+		_polynom = _polynom.createReducedVectorPolynom();
+	}
+	
 	public VectorPolynom getVector() {
 		return _polynom;
 	}
@@ -161,7 +143,7 @@ public class Polynom {
 			ele.setValue((a.getValueOrZero(index) + b.getValueOrZero(index)) % MODULO);
 		});
 
-		return createPolyFromVectorPolynom(vp3.createInverted(), MODULO);
+		return createPolyFromVectorPolynom(vp3.createInverted().createReducedVectorPolynom(), MODULO);
 	}
 
 	/**
@@ -274,13 +256,30 @@ public class Polynom {
 		return new Polynom(this);
 	}
 
-	/**
-	 * @param p
-	 *            has to be a Prim number, is represending the modulo Value for
-	 *            the Polynom
-	 * @return List with numbers therfor the polynome becomes Zero, will return
-	 *         a empty List if there are no nullPoints
-	 */
+	public boolean isZero() {
+		Polynom createPolyFromArray = Polynom.createPolyFromArray(new Integer[] { 0 }, MODULO);
+		return equals(createPolyFromArray);
+	}
+
+	public boolean hasZeroDivisor() {
+		int degree = _polynom.getDegree();
+		int maxToTest = degree / 2;
+		int size = getVector().size();
+		VectorPolynom createVectorPolynom = VectorPolynom.createVectorPolynom(size);
+		createVectorPolynom.set(size - 2, 1);
+		Polynom startingPoly = Polynom.createPolyFromVectorPolynom(createVectorPolynom, MODULO);
+
+		while (startingPoly.getVector().getDegree() <= maxToTest) {
+			Polynom calculateDividePolynomRest = calculateDividePolynomRest(startingPoly);
+			if (calculateDividePolynomRest.isZero()) {
+				return true;
+			}
+			startingPoly.nextPoly();
+		}
+		return false;
+	}
+
+	
 	private List<Integer> getNullPoints(NullPoints nulls) {
 		List<Integer> nullPoints = new ArrayList<Integer>();
 		for (int i = 0; i < MODULO; i++) {
@@ -288,13 +287,11 @@ public class Polynom {
 			int lenght = _polynom.size();
 			int sum = _polynom.stream()
 
-					.filter(ele -> lenght - 1 != ele.getIndex())
+					.filter(ele -> ele.getValue() != 0)
 
-					.map(ele -> (int) Math.pow(ele.getValue() * input, lenght - 1 - ele.getIndex()))
+					.map(ele -> ele.getValue() * (int) Math.pow(input, lenght - 1 - ele.getIndex()))
 
 					.reduce(0, (total, ele) -> total + ele);
-
-			sum += _polynom.getValue(lenght - 1);
 
 			if (sum % MODULO == 0) {
 				nullPoints.add(input);

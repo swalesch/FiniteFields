@@ -18,12 +18,13 @@ public class Field {
 
 	/**
 	 * @param generatingPolynom
-	 *            has to be a polynom without 0 points
+	 *            has to be a polynom without 0 points and has to be irreducible
 	 */
 	public static Field createField(Polynom generatingPolynom) {
-		Preconditions.checkArgument(!generatingPolynom.hasNullpoints(), "generatingPolynom has at least one null point");
+		Preconditions.checkArgument(!generatingPolynom.hasNullpoints(), generatingPolynom+" has at least one null point");
 		List<Polynom> allElements = Polynom.createAllPolynomes(generatingPolynom.getModulo(),
 				generatingPolynom.getVector().getDegree());
+		allElements.forEach(ele-> ele.reducePolynom());
 		Field field = new Field(allElements, generatingPolynom);
 
 		return field;

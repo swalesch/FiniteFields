@@ -44,9 +44,36 @@ public class PolynomTest {
 		assertThat(generatingPolynomes).containsExactlyElementsOf(getGeneratingPolynomP3N3());
 
 	}
+	
+	@Test
+	public void testZeroDivision(){
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0 }, 2).hasZeroDivisor()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0 }, 2).hasZeroDivisor()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 2).hasZeroDivisor()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 3).hasZeroDivisor()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2, 2 }, 3).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0, 1 }, 3).hasZeroDivisor()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0, 2 }, 3).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1, 2 }, 3).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 2, 1 }, 3).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2, 1, 1 }, 3).hasZeroDivisor()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2, 2, 2 }, 3).hasZeroDivisor()).isFalse();
+	}
+	
+	@Test
+	public void testIsZero(){
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 }, 2).isZero()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 , 0 }, 2).isZero()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 }, 3).isZero()).isTrue();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1 }, 3).isZero()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 , 1 }, 3).isZero()).isFalse();
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 , 0 , 1 }, 11).isZero()).isFalse();
+	}
 
 	@Test
 	public void testNullpoints() {
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2, 0, 1 }, 3).getAllNullPoints()).isEmpty();
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2).getAllNullPoints()).isEmpty();
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0 }, 2).getAllNullPoints()).containsOnly(0, 1);
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1, 1 }, 2).getAllNullPoints()).containsOnly(1);
@@ -159,11 +186,24 @@ public class PolynomTest {
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1 }, 2))
 				.isNotEqualTo(
 						Polynom.createPolyFromArray(new Integer[] { 1 }, 3));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 0 }, 2))
+				.isEqualTo(
+						Polynom.createPolyFromArray(new Integer[] { 0 , 0 }, 2));
 
 	}
 
 	@Test
 	public void testDivPolynom() {
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 2, 4, 1 }, 5)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 5)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 0 }, 5));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 0, 0, 1 }, 3)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0 }, 3));
+		
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 2, 0, 1 }, 3)
 				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 0, 1 }, 3)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 2 }, 3));
@@ -183,6 +223,14 @@ public class PolynomTest {
 		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2)
 				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1 }, 2)))
 						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1 , 0 }, 2)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 1 }, 2)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0 }, 2));
+		
+		assertThat(Polynom.createPolyFromArray(new Integer[] { 1, 1 , 1 }, 3)
+				.calculateDividePolynomRest(Polynom.createPolyFromArray(new Integer[] { 1, 2 }, 3)))
+						.isEqualTo(Polynom.createPolyFromArray(new Integer[] { 0 }, 3));
 
 	}
 
@@ -244,6 +292,13 @@ public class PolynomTest {
 		List<Polynom> polys = new ArrayList<Polynom>();
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 0, 2, 1 }, 3));
 		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 0, 2, 2 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 0, 2 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 1, 2 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 1, 2, 1 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 2, 0, 1 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 2, 1, 1 }, 3));
+		polys.add(Polynom.createPolyFromArray(new Integer[] { 1, 2, 2, 2 }, 3));
+		
 		return polys;
 	}
 
@@ -262,7 +317,7 @@ public class PolynomTest {
 
 	@Test
 	public void testGenericPolysIrreduzible() {
-		int p=3,n=4;
+		int p=3,n=3;
 		List<Polynom> generatingPolynomes = Polynom.createGeneratingPolynomes(p, n);
 		List<Polynom> allPolynomes = Polynom.createAllPolynomes(p, n);
 		for (int i = 0; i < p; i++) {
