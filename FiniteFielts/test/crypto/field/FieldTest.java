@@ -67,7 +67,7 @@ public class FieldTest {
 	
 	@Test
 	public void tesTest(){
-		Polynom generatingPolynom = Polynom.createXGeneratingPolynome(3, 3, 8).get(5);
+		Polynom generatingPolynom = Polynom.createXGeneratingPolynome(2, 2, 8).get(0);
 		Field field = Field.createField(generatingPolynom);
 		System.out.println("Generating: "+generatingPolynom+"\n");
 		System.out.println(field.toString());
