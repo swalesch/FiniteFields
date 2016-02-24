@@ -31,50 +31,49 @@ public class Polynom {
 	public static List<Polynom> createGeneratingPolynomes(int p, int n) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
-		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n+1);
+		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n + 1);
 		firstCandidate.set(0, 1);
 		Polynom startingPoly = Polynom.createPolyFromVectorPolynom(firstCandidate, p);
-		
-		while(startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0)==1){
-			if(!startingPoly.hasZeroDivisor()){
+
+		while (startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0) == 1) {
+			if (!startingPoly.hasZeroDivisor()) {
 				allGeneratingPolynomes.add(Polynom.createPolynome(startingPoly));
 			}
 			startingPoly.nextPoly();
 		}
-		
+
 		return allGeneratingPolynomes;
 	}
-	
+
 	/**
 	 * @param p
 	 *            has to be a Prim number, is represending the modulo Value for
 	 *            the Polynoms
 	 * @param n
 	 *            has to be a number, is represending the degree of the Polynoms
-	 * @param x   
-	 * 			  represents the max number of created polynoms
-	 * 			  it always returns only as much as existing
-	 * @return 
-	 * 			  a List out of X or all possible Polynoms to generate a modulo
-	 *            Field sized p^n
+	 * @param x
+	 *            represents the max number of created polynoms it always
+	 *            returns only as much as existing
+	 * @return a List out of X or all possible Polynoms to generate a modulo
+	 *         Field sized p^n
 	 */
 	public static List<Polynom> createXGeneratingPolynome(int p, int n, int x) {
 		List<Polynom> allGeneratingPolynomes = new ArrayList<Polynom>();
 
-		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n+1);
+		VectorPolynom firstCandidate = VectorPolynom.createVectorPolynom(n + 1);
 		firstCandidate.set(0, 1);
 		Polynom startingPoly = Polynom.createPolyFromVectorPolynom(firstCandidate, p);
-		
-		while(startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0)==1){
-			if(!startingPoly.hasZeroDivisor()){
+
+		while (startingPoly.getVector().getDegree() == n && startingPoly.getVector().getValue(0) == 1) {
+			if (!startingPoly.hasZeroDivisor()) {
 				allGeneratingPolynomes.add(Polynom.createPolynome(startingPoly));
-				if(allGeneratingPolynomes.size()==x){
+				if (allGeneratingPolynomes.size() == x) {
 					return allGeneratingPolynomes;
 				}
 			}
 			startingPoly.nextPoly();
 		}
-		
+
 		return allGeneratingPolynomes;
 	}
 
@@ -115,10 +114,10 @@ public class Polynom {
 		return new Polynom(vp, p);
 	}
 
-	public void reducePolynom(){
+	public void reducePolynom() {
 		_polynom = _polynom.createReducedVectorPolynom();
 	}
-	
+
 	public VectorPolynom getVector() {
 		return _polynom;
 	}
@@ -173,8 +172,8 @@ public class Polynom {
 	 */
 	public Polynom calculateDividePolynomRest(Polynom polynom) {
 		Preconditions.checkArgument(MODULO == polynom.MODULO, "The given Polynoms are in different Modulo groups");
-		Preconditions.checkArgument(polynom._polynom.getDegree()>0, "The given Polynom is just a Number.");
-		
+		Preconditions.checkArgument(polynom._polynom.getDegree() > 0, "The given Polynom is just a Number.");
+
 		Polynom p0 = polynom;
 		int max = Math.max(this._polynom.getDegree(), polynom._polynom.getDegree());
 		int min = Math.min(this._polynom.getDegree(), polynom._polynom.getDegree());
@@ -279,7 +278,6 @@ public class Polynom {
 		return false;
 	}
 
-	
 	private List<Integer> getNullPoints(NullPoints nulls) {
 		List<Integer> nullPoints = new ArrayList<Integer>();
 		for (int i = 0; i < MODULO; i++) {
@@ -355,5 +353,29 @@ public class Polynom {
 	private Polynom(Polynom poly) {
 		_polynom = VectorPolynom.createVectorPolynom(poly._polynom);
 		MODULO = poly.MODULO;
+	}
+
+	public String toHtmlString() {
+
+		String polynom = "";
+		for (int i = 0; i < _polynom.size(); i++) {
+
+			Integer wert = _polynom.getValue(i);
+			if (wert != 0) {
+
+				if ((i + 1) != _polynom.size()) {
+
+					if (wert != 1) {
+
+						polynom += wert;
+					}
+					polynom += "x<sup>" + (_polynom.size() - (i + 1)) + "</sup>+";
+				} else {
+					polynom += wert;
+				}
+			}
+
+		}
+		return polynom;
 	}
 }
