@@ -22,6 +22,7 @@ RemoteSystemsTempFiles
 .settings
 *.class
 .recommenders
+.classpath
 
 # =========================
 # Operating System Files
