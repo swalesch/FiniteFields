@@ -69,15 +69,13 @@ public class Conductor extends JFrame {
 				int p = 5;
 				// _Feld.setText(Polynom.createXGeneratingPolynome(p, n,
 				// x).get(0).toString());
-				String s = String.valueOf(Polynom.createXGeneratingPolynome(p,
-						n, x));
+				String s = String.valueOf(Polynom.createXGeneratingPolynome(p, n, x));
 				Ausgabe.setText(s);
 			}
 		});
 
 		// Erzeugung eines JTabbedPane-Objektes
-		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP,
-				JTabbedPane.SCROLL_TAB_LAYOUT);
+		JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
 
 		// Hier werden die JPanels als Registerkarten hinzugef�gt
 		tabpane.addTab("Generatorpolynom", Generatorpolynom);
