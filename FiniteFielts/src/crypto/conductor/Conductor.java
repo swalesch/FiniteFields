@@ -27,7 +27,7 @@ import crypto.time.measurement.TimeIt;
 
 
 
-public class conductor extends JFrame {
+public class Conductor extends JFrame {
 	
     // main-Methode
     public static void main(String[] args)
