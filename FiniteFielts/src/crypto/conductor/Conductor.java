@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,8 +26,8 @@ public class Conductor extends JFrame {
 	public static void main(String[] args) {
 		// Erzeugung eines neuen Dialoges
 		JFrame meinJFrame = new JFrame();
-		meinJFrame.setTitle("JPanel");
-		meinJFrame.setSize(500, 400);
+		meinJFrame.setTitle("Irreduzibles Polynom");
+		meinJFrame.setSize(470, 500);
 		meinJFrame.setResizable(false);
 
 		// JPanel erzeugung
@@ -35,7 +36,9 @@ public class Conductor extends JFrame {
 		Generatorpolynom.setLayout(null);
 
 		JPanel field = new JPanel();
+		field.setLayout(null);
 
+		// ----------------------------------------------------Generatorpolynom
 		JLabel genlabel = new JLabel("Grad:");
 		genlabel.setBounds(40, 15, 100, 25);
 		JTextArea NEingabe = new JTextArea();
@@ -77,6 +80,49 @@ public class Conductor extends JFrame {
 		Generatorpolynom.add(xlabel);
 		Generatorpolynom.add(auslabel);
 		Generatorpolynom.add(editorScrollPane);
+		// --------------------------------------------------------------------------field
+
+		JButton run = new JButton("Run");
+		run.setBounds(250, 37, 100, 20);
+		JLabel eingabepoly = new JLabel("Polynomauswahl");
+		eingabepoly.setBounds(70, 15, 100, 25);
+		JComboBox polyein = new JComboBox();
+		polyein.setBounds(70, 35, 150, 25);
+
+		JScrollPane koerper = new JScrollPane();
+		koerper.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JLabel allkoerper = new JLabel("Alle Elemente des Körpers");
+		allkoerper.setBounds(100, 80, 150, 20);
+		koerper.setBounds(100, 100, 250, 70);
+		koerper.setPreferredSize(new Dimension(10, 200));
+		koerper.setMinimumSize(new Dimension(10, 50));
+
+		JScrollPane addtable = new JScrollPane();
+		addtable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JLabel labaddtable = new JLabel("Additionstabelle");
+		labaddtable.setBounds(100, 190, 150, 20);
+		addtable.setBounds(100, 210, 250, 70);
+		addtable.setPreferredSize(new Dimension(10, 200));
+		addtable.setMinimumSize(new Dimension(10, 50));
+
+		JScrollPane multable = new JScrollPane();
+		multable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JLabel labmultable = new JLabel("Multiplikationstabelle");
+		labmultable.setBounds(100, 300, 150, 20);
+		multable.setBounds(100, 320, 250, 70);
+		multable.setPreferredSize(new Dimension(10, 200));
+		multable.setMinimumSize(new Dimension(10, 50));
+
+		field.add(polyein);
+		field.add(eingabepoly);
+		field.add(allkoerper);
+		field.add(koerper);
+		field.add(addtable);
+		field.add(labaddtable);
+		field.add(labmultable);
+		field.add(multable);
+
+		field.add(run);
 
 		// Knopfaction
 
