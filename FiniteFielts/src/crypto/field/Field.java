@@ -21,10 +21,11 @@ public class Field {
 	 *            has to be a polynom without 0 points and has to be irreducible
 	 */
 	public static Field createField(Polynom generatingPolynom) {
-		Preconditions.checkArgument(!generatingPolynom.hasNullpoints(), generatingPolynom+" has at least one null point");
+		Preconditions.checkArgument(!generatingPolynom.hasNullpoints(),
+				generatingPolynom + " has at least one null point");
 		List<Polynom> allElements = Polynom.createAllPolynomes(generatingPolynom.getModulo(),
 				generatingPolynom.getVector().getDegree());
-		allElements.forEach(ele-> ele.reducePolynom());
+		allElements.forEach(ele -> ele.reducePolynom());
 		Field field = new Field(allElements, generatingPolynom);
 
 		return field;
@@ -55,6 +56,35 @@ public class Field {
 		return _multiTable.get(i).get(j);
 	}
 
+	public String getAllElementsAsString() {
+		return _allElements.toString();
+	}
+
+	public String getAddTableAsString() {
+		String addTable = "<table style='width:100%'>";
+		for (int i = 0; i < _addTable.get(0).size(); i++) {
+			addTable += "<tr>";
+			for (int j = 0; j < _addTable.size(); j++) {
+				addTable += "<td>" + _addTable.get(j).get(i).toString() + "<td>";
+			}
+			addTable += "</tr>";
+		}
+		return addTable + "</table>";
+	}
+
+	public String getMultiTableAsHtmlString() {
+		String multiTable = "<table style='width:100%'>";
+		for (int i = 0; i < _multiTable.get(0).size(); i++) {
+			multiTable += "<tr>";
+			for (int j = 0; j < _multiTable.size(); j++) {
+				multiTable += "<td>" + _multiTable.get(j).get(i).toString() + "<td>";
+
+			}
+			multiTable += "</tr>";
+		}
+		return multiTable + "</table>";
+	}
+
 	@Override
 	public String toString() {
 		String string = "all Elements:\n" + _allElements.toString();
@@ -63,13 +93,13 @@ public class Field {
 		for (int i = 0; i < _addTable.get(0).size(); i++) {
 			for (int j = 0; j < _addTable.size(); j++) {
 				String vector = _addTable.get(j).get(i).toString();
-				if(vector.length()<=Genlength-2){
-					String help="";
-					int neededSpaces = Genlength-2-vector.length();
+				if (vector.length() <= Genlength - 2) {
+					String help = "";
+					int neededSpaces = Genlength - 2 - vector.length();
 					for (int k = 0; k < neededSpaces; k++) {
-						help+=" ";
+						help += " ";
 					}
-					vector = help+vector;
+					vector = help + vector;
 				}
 				string += vector + "  ";
 			}
@@ -81,15 +111,15 @@ public class Field {
 		string += "\n\nmulti Table:\n";
 		for (int i = 0; i < _multiTable.get(0).size(); i++) {
 			for (int j = 0; j < _multiTable.size(); j++) {
-				
+
 				String vector = _multiTable.get(j).get(i).toString();
-				if(vector.length()<=Genlength-2){
-					String help="";
-					int neededSpaces = Genlength-2-vector.length();
+				if (vector.length() <= Genlength - 2) {
+					String help = "";
+					int neededSpaces = Genlength - 2 - vector.length();
 					for (int k = 0; k < neededSpaces; k++) {
-						help+=" ";
+						help += " ";
 					}
-					vector = help+vector;
+					vector = help + vector;
 				}
 				string += vector + "  ";
 			}
