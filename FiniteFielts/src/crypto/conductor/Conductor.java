@@ -3,6 +3,7 @@ package crypto.conductor;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import crypto.conductor.tabs.GeneratingECCTab;
 import crypto.conductor.tabs.GeneratingFieldTab;
 import crypto.conductor.tabs.GeneratingPolyTab;
 
@@ -22,6 +23,7 @@ public class Conductor extends JFrame {
 
         allTabs.addTab("Generatingpolynom", GeneratingPolyTab.createGeneratorPolynomTab());
         allTabs.addTab("Field", GeneratingFieldTab.createFieldTab());
+        allTabs.addTab("Ecc Keys", GeneratingECCTab.createECCTab());
 
         _mainFrame.add(allTabs);
         _mainFrame.setVisible(true);

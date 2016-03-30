@@ -377,14 +377,10 @@ public class Polynom {
 
         String polynom = "";
         for (int i = 0; i < _polynom.size(); i++) {
-
             Integer wert = _polynom.getValue(i);
             if (wert != 0) {
-
                 if ((i + 1) != _polynom.size()) {
-
                     if (wert != 1) {
-
                         polynom += wert;
                     }
                     polynom += "x<sup>" + (_polynom.size() - (i + 1)) + "</sup>+";
@@ -392,7 +388,6 @@ public class Polynom {
                     polynom += wert;
                 }
             }
-
         }
         return polynom;
     }
