@@ -1,5 +1,8 @@
 package crypto.conductor;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
@@ -27,6 +30,41 @@ public class Conductor extends JFrame {
 
         _mainFrame.add(allTabs);
         _mainFrame.setVisible(true);
+        _mainFrame.addWindowListener(getWindowListener());
+    }
+
+    private static WindowListener getWindowListener() {
+        return new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.exit(JFrame.DISPOSE_ON_CLOSE);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+        };
     }
 
 }
