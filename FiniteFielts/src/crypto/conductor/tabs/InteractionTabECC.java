@@ -3,7 +3,6 @@ package crypto.conductor.tabs;
 import java.math.BigInteger;
 
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeListener;
 
 import crypto.ecc.Configuration;
 import crypto.ecc.Functions;
@@ -14,6 +13,42 @@ import crypto.ecc.Functions;
  * @author Marcus Schilling
  */
 public class InteractionTabECC {
+
+	public static SpinnerNumberModel modelFieldParamA = new SpinnerNumberModel() {
+		/**
+		 * Compiler was complaining, so I've added this
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void setValue(Object value) {
+			super.setValue(value);
+			Configuration._ellipticCurveParamA = new BigInteger(value.toString());
+			GeneratingECCTab.UpdateCurveEquationInGUI();
+		}
+
+		public BigInteger getMinimum() {
+			return BigInteger.ONE;
+		}
+	};
+
+	public static SpinnerNumberModel modelFieldParamB = new SpinnerNumberModel() {
+		/**
+		 * Compiler was complaining, so I've added this
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void setValue(Object value) {
+			super.setValue(value);
+			Configuration._ellipticCurveParamB = new BigInteger(value.toString());
+			GeneratingECCTab.UpdateCurveEquationInGUI();
+		}
+
+		public BigInteger getMinimum() {
+			return BigInteger.ZERO;
+		}
+	};
 
 	public static SpinnerNumberModel modelCurvePointX = new SpinnerNumberModel() {
 
@@ -42,12 +77,12 @@ public class InteractionTabECC {
 			else
 				newValue = new BigInteger(getPreviousValue().toString());
 
+			Configuration._ellipticCurvePointX = newValue;
 			super.setValue(newValue);
 		}
 
 		@Override
 		public Object getValue() {
-			// TODO Auto-generated method stub
 			return Configuration._ellipticCurvePointX;
 		}
 
@@ -64,8 +99,7 @@ public class InteractionTabECC {
 			if (xVal.compareTo(new BigInteger("-1")) == 0) {
 				xVal = Configuration._ellipticCurveParamP.subtract(new BigInteger("-1"));
 
-				// NUDECC_Curve_Gen_X.Value = (decimal)xVal; constantly
-				// decrement x, until it fulfills the curve equation
+				// Call for higher value
 				return Functions.CurveGenChanged(true, false, xVal, BigInteger.ZERO);
 			}
 			else {
@@ -91,11 +125,6 @@ public class InteractionTabECC {
 
 			// Call for greater Value
 			return Functions.CurveGenChanged(true, true, xVal, BigInteger.ZERO);
-		}
-
-		@Override
-		public void addChangeListener(ChangeListener l) {
-			// TODO Auto-generated method stub
 		}
 	};
 	public static SpinnerNumberModel modelCurvePointY = new SpinnerNumberModel() {
@@ -125,17 +154,12 @@ public class InteractionTabECC {
 			else
 				newValue = new BigInteger(getPreviousValue().toString());
 
+			Configuration._ellipticCurvePointY = newValue;
 			super.setValue(newValue);
 		}
 
 		@Override
-		public void removeChangeListener(ChangeListener l) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
 		public Object getValue() {
-			// TODO Auto-generated method stub
 			return Configuration._ellipticCurvePointY;
 		}
 
@@ -151,14 +175,8 @@ public class InteractionTabECC {
 		public Object getNextValue() {
 			BigInteger yVal = Configuration._ellipticCurvePointY.add(BigInteger.ONE);
 
-			// Call for lower Value
-			return Functions.CurveGenChanged(false, false, Configuration._ellipticCurvePointX, yVal);
-		}
-
-		@Override
-		public void addChangeListener(ChangeListener l) {
-			// TODO Auto-generated method stub
-
+			// Call for higher Value
+			return Functions.CurveGenChanged(false, true, Configuration._ellipticCurvePointX, yVal);
 		}
 	};
 
@@ -180,22 +198,30 @@ public class InteractionTabECC {
 			if (((BigInteger) getValue()).equals(new BigInteger(value.toString())))
 				return;
 
-			boolean newValueIsGreaterThanBefore;
 			BigInteger newValue = new BigInteger(value.toString());
-			if (((BigInteger) getValue()).compareTo(newValue) > 0)
-				newValueIsGreaterThanBefore = false;
-			else {
-				newValueIsGreaterThanBefore = true;
+
+			// If Number isn't prime, get the next prime-Number
+			if (!newValue.isProbablePrime(25)) {
+				boolean newValueIsGreaterThanBefore;
+
+				if (((BigInteger) getValue()).compareTo(newValue) > 0)
+					newValueIsGreaterThanBefore = false;
+				else {
+					newValueIsGreaterThanBefore = true;
+				}
+
+				Configuration._ellipticCurveParamP = newValue;
+
+				if (newValueIsGreaterThanBefore)
+					newValue = new BigInteger(getNextValue().toString());
+				else
+					newValue = new BigInteger(getPreviousValue().toString());
 			}
 
 			Configuration._ellipticCurveParamP = newValue;
-
-			if (newValueIsGreaterThanBefore)
-				newValue = new BigInteger(getNextValue().toString());
-			else
-				newValue = new BigInteger(getPreviousValue().toString());
-
 			super.setValue(newValue);
+			GeneratingECCTab.UpdateCurveEquationInGUI();
+
 		}
 
 		@Override

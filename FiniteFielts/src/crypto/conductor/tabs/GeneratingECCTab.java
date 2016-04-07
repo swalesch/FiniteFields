@@ -15,33 +15,33 @@ import crypto.ecc.Configuration;
 
 public class GeneratingECCTab {
 
-	private static JLabel	_ellipticCurveParameter;
-	private static JLabel	_ellipticCurveALable;
-	private static JSpinner	_ellipticCurveASpinner;
-	private static JLabel	_ellipticCurveBLable;
-	private static JSpinner	_ellipticCurveBSpinner;
+	private static JLabel _ellipticCurveParameter;
+	private static JLabel _ellipticCurveALable;
+	private static JSpinner _ellipticCurveASpinner;
+	private static JLabel _ellipticCurveBLable;
+	private static JSpinner _ellipticCurveBSpinner;
 
-	private static JLabel	_ellipticCurvePrimLabel;
-	private static JSpinner	_ellipticCurvePrim;
+	private static JLabel _ellipticCurvePrimLabel;
+	private static JSpinner _ellipticCurvePrim;
 
-	private static JLabel	_ellipticCurvePoint;
-	private static JLabel	_curvePointXLabel;
-	private static JSpinner	_curvePointXSpinner;
-	private static JLabel	_curvePointYLabel;
-	private static JSpinner	_curvePointYSpinner;
-	private static JLabel	_ellipticCurveLabel;
-	private static JLabel	_keyPublicAliceLabel;
-	private static JLabel	_keyPrivateAliceLabel;
-	private static JLabel	_keyPublicBobLabel;
-	private static JLabel	_keyPrivateBobLabel;
-	private static JLabel	_keySharedLabel;
-	private static JLabel	_ellipticCurve_Output;
-	private static JLabel	_keyPublicAlice_Output;
-	private static JLabel	_keyPrivateAlice_Output;
-	private static JLabel	_keyPublicBob_Output;
-	private static JLabel	_keyPrivateBob_Output;
-	private static JLabel	_keyShared_Output;
-	private static JButton	_generateKeys;
+	private static JLabel _ellipticCurvePoint;
+	private static JLabel _curvePointXLabel;
+	private static JSpinner _curvePointXSpinner;
+	private static JLabel _curvePointYLabel;
+	private static JSpinner _curvePointYSpinner;
+	private static JLabel _ellipticCurveLabel;
+	private static JLabel _keyPublicAliceLabel;
+	private static JLabel _keyPrivateAliceLabel;
+	private static JLabel _keyPublicBobLabel;
+	private static JLabel _keyPrivateBobLabel;
+	private static JLabel _keySharedLabel;
+	private static JLabel _ellipticCurve_Output;
+	private static JLabel _keyPublicAlice_Output;
+	private static JLabel _keyPrivateAlice_Output;
+	private static JLabel _keyPublicBob_Output;
+	private static JLabel _keyPrivateBob_Output;
+	private static JLabel _keyShared_Output;
+	private static JButton _generateKeys;
 
 	public static JPanel createECCTab() {
 		JPanel eccPanel = new JPanel();
@@ -55,8 +55,7 @@ public class GeneratingECCTab {
 		_ellipticCurveALable.setBounds(40, 40, 20, 20);
 		eccPanel.add(_ellipticCurveALable);
 
-		_ellipticCurveASpinner = new JSpinner(new SpinnerNumberModel(1, 1,
-				Integer.MAX_VALUE, 1));
+		_ellipticCurveASpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 		_ellipticCurveASpinner.setBounds(60, 40, 100, 20);
 		eccPanel.add(_ellipticCurveASpinner);
 
@@ -64,8 +63,7 @@ public class GeneratingECCTab {
 		_ellipticCurveBLable.setBounds(40, 70, 20, 20);
 		eccPanel.add(_ellipticCurveBLable);
 
-		_ellipticCurveBSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
-				Integer.MAX_VALUE, 1));
+		_ellipticCurveBSpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 		_ellipticCurveBSpinner.setBounds(60, 70, 100, 20);
 		eccPanel.add(_ellipticCurveBSpinner);
 
@@ -97,28 +95,27 @@ public class GeneratingECCTab {
 		_ellipticCurvePrim.setBounds(200, 35, 55, 22);
 		eccPanel.add(_ellipticCurvePrim);
 
-		_ellipticCurveLabel = new JLabel(
-				"<html>y<sup>2</sup> = x<sup>3</sup> + 1x + 0 mod 23</html>");
+		_ellipticCurveLabel = new JLabel("<html>y<sup>2</sup> = x<sup>3</sup> + 1x + 0 mod 23</html>");
 		_ellipticCurveLabel.setBounds(200, 80, 200, 30);
 		eccPanel.add(_ellipticCurveLabel);
 
-		_keyPrivateAliceLabel = new JLabel("Geheimer SchlÃ¼ssel Alice:");
+		_keyPrivateAliceLabel = new JLabel("Geheimer Schlüssel Alice:");
 		_keyPrivateAliceLabel.setBounds(40, 120, 200, 20);
 		eccPanel.add(_keyPrivateAliceLabel);
 
-		_keyPrivateBobLabel = new JLabel("Geheimer SchlÃ¼ssel Bob:");
+		_keyPrivateBobLabel = new JLabel("Geheimer Schlüssel Bob:");
 		_keyPrivateBobLabel.setBounds(400, 120, 200, 20);
 		eccPanel.add(_keyPrivateBobLabel);
 
-		_keyPublicAliceLabel = new JLabel("Ã–ffentlicher SchlÃ¼ssel Alice:");
+		_keyPublicAliceLabel = new JLabel("Öffentlicher Schlüssel Alice:");
 		_keyPublicAliceLabel.setBounds(40, 200, 200, 20);
 		eccPanel.add(_keyPublicAliceLabel);
 
-		_keyPublicBobLabel = new JLabel("Ã–ffentlicher SchlÃ¼ssel Bob:");
+		_keyPublicBobLabel = new JLabel("Öffentlicher Schlüssel Bob:");
 		_keyPublicBobLabel.setBounds(400, 200, 200, 20);
 		eccPanel.add(_keyPublicBobLabel);
 
-		_keySharedLabel = new JLabel("Gemeinsamer SchlÃ¼ssel:");
+		_keySharedLabel = new JLabel("Gemeinsamer Schlüssel:");
 		_keySharedLabel.setBounds(220, 280, 200, 20);
 		eccPanel.add(_keySharedLabel);
 
@@ -159,18 +156,14 @@ public class GeneratingECCTab {
 
 				}
 				catch (IllegalArgumentException ex) {
-					JOptionPane.showMessageDialog(Conductor._mainFrame,
-							"Illegal argument \n" + ex.getMessage(),
-							"Input Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Conductor._mainFrame, "Illegal argument \n"
+							+ ex.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		};
 	}
 
-	private void UpdateCurveEquationInGUI() {
-		_ellipticCurve_Output.setText(String.format(
-				"<html>y<sup>2</sup> = x<sup>3</sup> + %i, x + %i,</html>",
-				Configuration._ellipticCurveParamA,
-				Configuration._ellipticCurveParamB));
+	public static void UpdateCurveEquationInGUI() {
+		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %i, x + %i, mod %i,</html>", Configuration._ellipticCurveParamA, Configuration._ellipticCurveParamB, Configuration._ellipticCurveParamP));
 	}
 }
