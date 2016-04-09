@@ -49,11 +49,9 @@ public class Functions {
 				List<BigInteger> posPoints = new ArrayList<BigInteger>();
 				List<BigInteger> negPoints = new ArrayList<BigInteger>();
 
-				/*
-				 * ERROR! BigInteger.ZERO.add(BigInteger.ONE) is always ZERO!!!
-				 */
-				for (BigInteger i = BigInteger.ZERO; i.compareTo(Configuration._ellipticCurveParamP) < 0; i.add(BigInteger.ONE)) {
-					if (i.modPow(new BigInteger("2"), Configuration._ellipticCurveParamP) == rightSide) {
+				for (BigInteger i = BigInteger.ZERO; i.compareTo(Configuration._ellipticCurveParamP) < 0; i = i.add(BigInteger.ONE)) {
+					BigInteger leftSide = i.modPow(new BigInteger("2"), Configuration._ellipticCurveParamP);
+					if (leftSide.equals(rightSide)) {
 						posPoints.add(i);
 						// there's a y-value' for any y-value with y-value' =
 						// -y-value!
@@ -84,7 +82,7 @@ public class Functions {
 						x = x.subtract(BigInteger.ONE);
 
 					// x has to be between 0 and _ellipticCurveParamP
-					x.mod(Configuration._ellipticCurveParamP);
+					x = x.mod(Configuration._ellipticCurveParamP);
 
 					lastInstance = false;
 
@@ -97,8 +95,10 @@ public class Functions {
 				}
 
 				if (lastInstance) {
-					// contains all negative and positive values of y for this
-					// specific x-Value in ascending order
+					/**
+					 * contains all negative and positive values of y for this
+					 * specific x-Value in ascending order
+					 */
 					List<BigInteger> allPoints = new ArrayList<BigInteger>();
 
 					for (int i = negPoints.size() - 1; i >= 0; i--)
@@ -111,8 +111,10 @@ public class Functions {
 				}
 			}
 			else {
-				// calculate all y-values for given x-Value, when there doesn't
-				// exist a List now
+				/**
+				 * calculate all y-values for given x-Value, if there is
+				 * currently no existing list
+				 */
 				boolean found = false;
 
 				if (Configuration._ECC_Curve_Punktliste.containsKey(x))

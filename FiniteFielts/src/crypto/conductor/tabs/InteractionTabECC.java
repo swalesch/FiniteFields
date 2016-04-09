@@ -14,42 +14,6 @@ import crypto.ecc.Functions;
  */
 public class InteractionTabECC {
 
-	public static SpinnerNumberModel modelFieldParamA = new SpinnerNumberModel() {
-		/**
-		 * Compiler was complaining, so I've added this
-		 */
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void setValue(Object value) {
-			super.setValue(value);
-			Configuration._ellipticCurveParamA = new BigInteger(value.toString());
-			GeneratingECCTab.UpdateCurveEquationInGUI();
-		}
-
-		public BigInteger getMinimum() {
-			return BigInteger.ONE;
-		}
-	};
-
-	public static SpinnerNumberModel modelFieldParamB = new SpinnerNumberModel() {
-		/**
-		 * Compiler was complaining, so I've added this
-		 */
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public void setValue(Object value) {
-			super.setValue(value);
-			Configuration._ellipticCurveParamB = new BigInteger(value.toString());
-			GeneratingECCTab.UpdateCurveEquationInGUI();
-		}
-
-		public BigInteger getMinimum() {
-			return BigInteger.ZERO;
-		}
-	};
-
 	public static SpinnerNumberModel modelCurvePointX = new SpinnerNumberModel() {
 
 		/**
@@ -59,8 +23,10 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString())))
+			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+				super.setValue(value);
 				return;
+			}
 
 			boolean newValueIsGreaterThanBefore;
 			BigInteger newValue = new BigInteger(value.toString());
@@ -78,7 +44,7 @@ public class InteractionTabECC {
 				newValue = new BigInteger(getPreviousValue().toString());
 
 			Configuration._ellipticCurvePointX = newValue;
-			super.setValue(newValue);
+			GeneratingECCTab.SetSpinnerValues();
 		}
 
 		@Override
@@ -97,7 +63,7 @@ public class InteractionTabECC {
 			// if newValue equals -1, it has to be set to the maxValue of the
 			// equation
 			if (xVal.compareTo(new BigInteger("-1")) == 0) {
-				xVal = Configuration._ellipticCurveParamP.subtract(new BigInteger("-1"));
+				xVal = Configuration._ellipticCurveParamP.subtract(BigInteger.ONE);
 
 				// Call for higher value
 				return Functions.CurveGenChanged(true, false, xVal, BigInteger.ZERO);
@@ -124,7 +90,8 @@ public class InteractionTabECC {
 				xVal = xVal.mod(Configuration._ellipticCurveParamP);
 
 			// Call for greater Value
-			return Functions.CurveGenChanged(true, true, xVal, BigInteger.ZERO);
+			xVal = Functions.CurveGenChanged(true, true, xVal, BigInteger.ZERO);
+			return xVal;
 		}
 	};
 	public static SpinnerNumberModel modelCurvePointY = new SpinnerNumberModel() {
@@ -136,8 +103,10 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString())))
+			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+				super.setValue(value);
 				return;
+			}
 
 			boolean newValueIsGreaterThanBefore;
 			BigInteger newValue = new BigInteger(value.toString());
@@ -155,7 +124,7 @@ public class InteractionTabECC {
 				newValue = new BigInteger(getPreviousValue().toString());
 
 			Configuration._ellipticCurvePointY = newValue;
-			super.setValue(newValue);
+			GeneratingECCTab.SetSpinnerValues();
 		}
 
 		@Override
@@ -195,8 +164,10 @@ public class InteractionTabECC {
 		@Override
 		public void setValue(Object value) {
 
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString())))
+			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+				super.setValue(value);
 				return;
+			}
 
 			BigInteger newValue = new BigInteger(value.toString());
 
@@ -219,9 +190,8 @@ public class InteractionTabECC {
 			}
 
 			Configuration._ellipticCurveParamP = newValue;
-			super.setValue(newValue);
+			GeneratingECCTab.SetSpinnerValues();
 			GeneratingECCTab.UpdateCurveEquationInGUI();
-
 		}
 
 		@Override

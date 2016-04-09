@@ -25,10 +25,10 @@ public class GeneratingECCTab {
 	private static JSpinner _ellipticCurvePrim;
 
 	private static JLabel _ellipticCurvePoint;
-	private static JLabel _curvePointXLabel;
-	private static JSpinner _curvePointXSpinner;
-	private static JLabel _curvePointYLabel;
-	private static JSpinner _curvePointYSpinner;
+	private static JLabel _ellipticCurvePointXLabel;
+	private static JSpinner _ellipticCurvePointXSpinner;
+	private static JLabel _ellipticCurvePointYLabel;
+	private static JSpinner _ellipticCurvePointYSpinner;
 	private static JLabel _ellipticCurveLabel;
 	private static JLabel _keyPublicAliceLabel;
 	private static JLabel _keyPrivateAliceLabel;
@@ -63,7 +63,7 @@ public class GeneratingECCTab {
 		_ellipticCurveBLable.setBounds(40, 70, 20, 20);
 		eccPanel.add(_ellipticCurveBLable);
 
-		_ellipticCurveBSpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+		_ellipticCurveBSpinner = new JSpinner(new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
 		_ellipticCurveBSpinner.setBounds(60, 70, 100, 20);
 		eccPanel.add(_ellipticCurveBSpinner);
 
@@ -71,21 +71,21 @@ public class GeneratingECCTab {
 		_ellipticCurvePoint.setBounds(400, 15, 200, 20);
 		eccPanel.add(_ellipticCurvePoint);
 
-		_curvePointXLabel = new JLabel("x: ");
-		_curvePointXLabel.setBounds(400, 40, 20, 20);
-		eccPanel.add(_curvePointXLabel);
+		_ellipticCurvePointXLabel = new JLabel("x: ");
+		_ellipticCurvePointXLabel.setBounds(400, 40, 20, 20);
+		eccPanel.add(_ellipticCurvePointXLabel);
 
-		_curvePointXSpinner = new JSpinner(InteractionTabECC.modelCurvePointX);
-		_curvePointXSpinner.setBounds(420, 40, 100, 20);
-		eccPanel.add(_curvePointXSpinner);
+		_ellipticCurvePointXSpinner = new JSpinner(InteractionTabECC.modelCurvePointX);
+		_ellipticCurvePointXSpinner.setBounds(420, 40, 100, 20);
+		eccPanel.add(_ellipticCurvePointXSpinner);
 
-		_curvePointYLabel = new JLabel("y: ");
-		_curvePointYLabel.setBounds(400, 70, 20, 20);
-		eccPanel.add(_curvePointYLabel);
+		_ellipticCurvePointYLabel = new JLabel("y: ");
+		_ellipticCurvePointYLabel.setBounds(400, 70, 20, 20);
+		eccPanel.add(_ellipticCurvePointYLabel);
 
-		_curvePointYSpinner = new JSpinner(InteractionTabECC.modelCurvePointY);
-		_curvePointYSpinner.setBounds(420, 70, 100, 20);
-		eccPanel.add(_curvePointYSpinner);
+		_ellipticCurvePointYSpinner = new JSpinner(InteractionTabECC.modelCurvePointY);
+		_ellipticCurvePointYSpinner.setBounds(420, 70, 100, 20);
+		eccPanel.add(_ellipticCurvePointYSpinner);
 
 		_ellipticCurvePrimLabel = new JLabel("prim number p:");
 		_ellipticCurvePrimLabel.setBounds(200, 15, 100, 25);
@@ -165,5 +165,13 @@ public class GeneratingECCTab {
 
 	public static void UpdateCurveEquationInGUI() {
 		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %i, x + %i, mod %i,</html>", Configuration._ellipticCurveParamA, Configuration._ellipticCurveParamB, Configuration._ellipticCurveParamP));
+	}
+
+	public static void SetSpinnerValues() {
+		_ellipticCurveASpinner.setValue(Configuration._ellipticCurveParamA);
+		_ellipticCurveBSpinner.setValue(Configuration._ellipticCurveParamB);
+		_ellipticCurvePrim.setValue(Configuration._ellipticCurveParamP);
+		_ellipticCurvePointXSpinner.setValue(Configuration._ellipticCurvePointX);
+		_ellipticCurvePointYSpinner.setValue(Configuration._ellipticCurvePointY);
 	}
 }
