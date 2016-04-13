@@ -14,6 +14,48 @@ import crypto.ecc.Functions;
  */
 public class InteractionTabECC {
 
+	public static SpinnerNumberModel modelCurveParamA = new SpinnerNumberModel() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void setValue(Object value) {
+			BigInteger nVal = new BigInteger(value.toString());
+			if (nVal.compareTo(BigInteger.ONE) < 0) {
+				nVal = BigInteger.ONE;
+				value = 1;
+			}
+
+			Configuration._ellipticCurveParamA = nVal;
+			super.setValue(value);
+			// doesnt work
+			// GeneratingECCTab.UpdateCurveEquationInGUI();
+		}
+	};
+
+	public static SpinnerNumberModel modelCurveParamB = new SpinnerNumberModel() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void setValue(Object value) {
+			BigInteger nVal = new BigInteger(value.toString());
+			if (nVal.compareTo(BigInteger.ZERO) < 0) {
+				value = 0;
+				nVal = BigInteger.ZERO;
+			}
+
+			Configuration._ellipticCurveParamB = nVal;
+			super.setValue(value);
+			// doesnt work
+			// GeneratingECCTab.UpdateCurveEquationInGUI();
+		}
+	};
+
 	public static SpinnerNumberModel modelCurvePointX = new SpinnerNumberModel() {
 
 		/**
@@ -191,7 +233,8 @@ public class InteractionTabECC {
 
 			Configuration._ellipticCurveParamP = newValue;
 			GeneratingECCTab.SetSpinnerValues();
-			GeneratingECCTab.UpdateCurveEquationInGUI();
+			// doesnt work
+			// GeneratingECCTab.UpdateCurveEquationInGUI();
 		}
 
 		@Override

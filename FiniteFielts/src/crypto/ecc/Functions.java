@@ -30,8 +30,8 @@ public class Functions {
 		boolean foundAssociation = false;
 
 		try {
-			for (int i = 0; i < Configuration._ECC_Curve_Punktliste.size(); i++)
-				if (Configuration._ECC_Curve_Punktliste.keySet().contains(x)) {
+			for (int i = 0; i < eccField._ECC_Curve_Punktliste.size(); i++)
+				if (eccField.containsKey(x)) {
 					foundAssociation = true;
 				}
 		}
@@ -71,7 +71,6 @@ public class Functions {
 					// get first positive value and use as y-Value
 					Configuration._ellipticCurvePointX = x;
 					Configuration._ellipticCurvePointY = posPoints.get(0);
-					return x;
 				}
 				else {
 					// recalculate for other x-Value, if there does not exist
@@ -107,7 +106,8 @@ public class Functions {
 					for (int i = 0; i < posPoints.size(); i++)
 						allPoints.add(posPoints.get(i));
 
-					Configuration._ECC_Curve_Punktliste.putIfAbsent(x, allPoints);
+					eccField.putIfAbsent(x, allPoints);
+					return x;
 				}
 			}
 			else {
@@ -117,27 +117,29 @@ public class Functions {
 				 */
 				boolean found = false;
 
-				if (Configuration._ECC_Curve_Punktliste.containsKey(x))
+				if (eccField.containsKey(x)) {
 					found = true;
+				}
 
 				// if x-Value exists in the list, the next (higher or lower)
 				// value can be extracted from the list
 				if (found) {
 					if (riseKeepingValue) {
-						for (int i = 0; i < Configuration._ECC_Curve_Punktliste.get(x).size(); i++)
-							if (Configuration._ECC_Curve_Punktliste.get(x).get(i).compareTo(y) > 0) {
+						for (int i = 0; i < eccField.getValueToKey(x).size(); i++)
+							if (eccField.getValueToKey(x).get(i).compareTo(y) > 0) {
 								Configuration._ellipticCurvePointX = x;
-								Configuration._ellipticCurvePointY = Configuration._ECC_Curve_Punktliste.get(x).get(i);
+								Configuration._ellipticCurvePointY = eccField.getValueToKey(x).get(i);
 								return Configuration._ellipticCurvePointY;
 							}
 					}
 					else {
-						for (int i = Configuration._ECC_Curve_Punktliste.get(x).size() - 1; i >= 0; i--)
-							if (Configuration._ECC_Curve_Punktliste.get(x).get(i).compareTo(y) < 0) {
+						for (int i = eccField.getValueToKey(x).size() - 1; i >= 0; i--) {
+							if (eccField.getValueToKey(x).get(i).compareTo(y) < 0) {
 								Configuration._ellipticCurvePointX = x;
-								Configuration._ellipticCurvePointY = Configuration._ECC_Curve_Punktliste.get(x).get(i);
+								Configuration._ellipticCurvePointY = eccField.getValueToKey(x).get(i);
 								return Configuration._ellipticCurvePointY;
 							}
+						}
 					}
 				}
 				else {
@@ -164,8 +166,8 @@ public class Functions {
 			boolean found = false;
 
 			if (riseKeepingValue) {
-				for (int i = 0; i < Configuration._ECC_Curve_Punktliste.get(x).size(); i++) {
-					if (Configuration._ECC_Curve_Punktliste.get(x).get(i).compareTo(Configuration._ellipticCurvePointY) > 0) {
+				for (int i = 0; i < eccField.getValueToKey(x).size(); i++) {
+					if (eccField.getValueToKey(x).get(i).compareTo(Configuration._ellipticCurvePointY) > 0) {
 						index = i;
 						found = true;
 						break;
@@ -178,8 +180,8 @@ public class Functions {
 					index = 0;
 			}
 			else {
-				for (int i = Configuration._ECC_Curve_Punktliste.get(x).size() - 1; i >= 0; i--) {
-					if (Configuration._ECC_Curve_Punktliste.get(x).get(i).compareTo(Configuration._ellipticCurvePointY) < 0) {
+				for (int i = eccField.getValueToKey(x).size() - 1; i >= 0; i--) {
+					if (eccField.getValueToKey(x).get(i).compareTo(Configuration._ellipticCurvePointY) < 0) {
 						index = i;
 						found = true;
 						break;
@@ -189,17 +191,16 @@ public class Functions {
 				// if there is no number lower than the current value, take the
 				// highest possible number (has always the last index)
 				if (!found)
-					index = Configuration._ECC_Curve_Punktliste.get(x).size() - 1;
+					index = eccField.getValueToKey(x).size() - 1;
 			}
 
 			Configuration._ellipticCurvePointX = x;
-			Configuration._ellipticCurvePointY = Configuration._ECC_Curve_Punktliste.get(x).get(index);
+			Configuration._ellipticCurvePointY = eccField.getValueToKey(x).get(index);
 			if (keepX)
 				return x;
 			else
 				return Configuration._ellipticCurvePointY;
 		}
-
-		return BigInteger.ZERO;
+		return null;
 	}
 }

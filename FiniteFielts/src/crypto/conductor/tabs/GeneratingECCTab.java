@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
 import crypto.conductor.Conductor;
 import crypto.ecc.Configuration;
@@ -55,15 +54,16 @@ public class GeneratingECCTab {
 		_ellipticCurveALable.setBounds(40, 40, 20, 20);
 		eccPanel.add(_ellipticCurveALable);
 
-		_ellipticCurveASpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
+		_ellipticCurveASpinner = new JSpinner(InteractionTabECC.modelCurveParamA);
 		_ellipticCurveASpinner.setBounds(60, 40, 100, 20);
+		_ellipticCurveASpinner.setValue(1);
 		eccPanel.add(_ellipticCurveASpinner);
 
 		_ellipticCurveBLable = new JLabel("B: ");
 		_ellipticCurveBLable.setBounds(40, 70, 20, 20);
 		eccPanel.add(_ellipticCurveBLable);
 
-		_ellipticCurveBSpinner = new JSpinner(new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+		_ellipticCurveBSpinner = new JSpinner(InteractionTabECC.modelCurveParamB);
 		_ellipticCurveBSpinner.setBounds(60, 70, 100, 20);
 		eccPanel.add(_ellipticCurveBSpinner);
 
@@ -95,9 +95,9 @@ public class GeneratingECCTab {
 		_ellipticCurvePrim.setBounds(200, 35, 55, 22);
 		eccPanel.add(_ellipticCurvePrim);
 
-		_ellipticCurveLabel = new JLabel("<html>y<sup>2</sup> = x<sup>3</sup> + 1x + 0 mod 23</html>");
-		_ellipticCurveLabel.setBounds(200, 80, 200, 30);
-		eccPanel.add(_ellipticCurveLabel);
+		_ellipticCurve_Output = new JLabel("<html>y<sup>2</sup> = x<sup>3</sup> + 1x + 0 mod 23</html>");
+		_ellipticCurve_Output.setBounds(200, 80, 200, 30);
+		eccPanel.add(_ellipticCurve_Output);
 
 		_keyPrivateAliceLabel = new JLabel("Geheimer Schlüssel Alice:");
 		_keyPrivateAliceLabel.setBounds(40, 120, 200, 20);
@@ -164,7 +164,10 @@ public class GeneratingECCTab {
 	}
 
 	public static void UpdateCurveEquationInGUI() {
-		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %i, x + %i, mod %i,</html>", Configuration._ellipticCurveParamA, Configuration._ellipticCurveParamB, Configuration._ellipticCurveParamP));
+		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %i x + %i mod %i</html>", Configuration._ellipticCurveParamA, Configuration._ellipticCurveParamB, Configuration._ellipticCurveParamP));
+		// Code unreachable -> error in line above?
+		_ellipticCurve_Output.repaint();
+
 	}
 
 	public static void SetSpinnerValues() {
