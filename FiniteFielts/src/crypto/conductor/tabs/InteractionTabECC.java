@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import javax.swing.SpinnerNumberModel;
 
 import crypto.ecc.Configuration;
+import crypto.ecc.ECCField;
 import crypto.ecc.Functions;
 
 /**
@@ -22,16 +23,24 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			BigInteger nVal = new BigInteger(value.toString());
-			if (nVal.compareTo(BigInteger.ONE) < 0) {
-				nVal = BigInteger.ONE;
-				value = 1;
-			}
+			BigInteger newVal = new BigInteger(value.toString());
 
-			Configuration._ellipticCurveParamA = nVal;
-			super.setValue(value);
-			// doesnt work
-			// GeneratingECCTab.UpdateCurveEquationInGUI();
+			if (newVal.compareTo(Configuration._ellipticCurveParamA) == 0) {
+				super.setValue(newVal);
+			}
+			else {
+
+				if (newVal.compareTo(BigInteger.ONE) < 0) {
+					newVal = BigInteger.ONE;
+					value = 1;
+				}
+
+				Configuration._ellipticCurveParamA = newVal;
+				ECCField.resetECCField();
+				ECCField.recalculateGeneratorPoint();
+				GeneratingECCTab.updateCurveEquationInGUI();
+				GeneratingECCTab.SetSpinnerValues();
+			}
 		}
 	};
 
@@ -43,16 +52,24 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			BigInteger nVal = new BigInteger(value.toString());
-			if (nVal.compareTo(BigInteger.ZERO) < 0) {
-				value = 0;
-				nVal = BigInteger.ZERO;
-			}
+			BigInteger newVal = new BigInteger(value.toString());
 
-			Configuration._ellipticCurveParamB = nVal;
-			super.setValue(value);
-			// doesnt work
-			// GeneratingECCTab.UpdateCurveEquationInGUI();
+			if (newVal.compareTo(Configuration._ellipticCurveParamB) == 0) {
+				super.setValue(newVal);
+			}
+			else {
+
+				if (newVal.compareTo(BigInteger.ZERO) < 0) {
+					value = 0;
+					newVal = BigInteger.ZERO;
+				}
+
+				Configuration._ellipticCurveParamB = newVal;
+				ECCField.resetECCField();
+				ECCField.recalculateGeneratorPoint();
+				GeneratingECCTab.updateCurveEquationInGUI();
+				GeneratingECCTab.SetSpinnerValues();
+			}
 		}
 	};
 
@@ -65,32 +82,34 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+			System.out.println("ModelCurvePointX.setValue " + value.toString());
+			BigInteger oldValue = (BigInteger) getValue();
+			BigInteger newValue = new BigInteger(value.toString());
+
+			if (oldValue.equals(newValue) && ECCField.containsKey(oldValue)) {
 				super.setValue(value);
 				return;
 			}
 
-			boolean newValueIsGreaterThanBefore;
-			BigInteger newValue = new BigInteger(value.toString());
-			if (((BigInteger) getValue()).compareTo(newValue) > 0)
-				newValueIsGreaterThanBefore = false;
-			else {
+			boolean newValueIsGreaterThanBefore = false;
+			if (oldValue.compareTo(newValue) <= 0) {
 				newValueIsGreaterThanBefore = true;
 			}
 
 			Configuration._ellipticCurvePointX = newValue;
 
 			if (newValueIsGreaterThanBefore)
-				newValue = new BigInteger(getNextValue().toString());
+				Functions.curveGenChanged(true, true, newValue, Configuration._ellipticCurvePointY);
 			else
-				newValue = new BigInteger(getPreviousValue().toString());
+				Functions.curveGenChanged(true, false, newValue, Configuration._ellipticCurvePointY);
 
-			Configuration._ellipticCurvePointX = newValue;
 			GeneratingECCTab.SetSpinnerValues();
 		}
 
 		@Override
 		public Object getValue() {
+			System.out.println("ModelCurvePointX.getValue "
+					+ Configuration._ellipticCurvePointX.toString());
 			return Configuration._ellipticCurvePointX;
 		}
 
@@ -99,24 +118,26 @@ public class InteractionTabECC {
 		 * Gets the previous possible x-Value that has corresponding y-values fulfilling the curve equation
 		 */
 		public Object getPreviousValue() {
-
-			BigInteger xVal = Configuration._ellipticCurvePointX.subtract(BigInteger.ONE);
+			System.out.println("ModelCurvePointX.previousValue");
+			BigInteger newVal = Configuration._ellipticCurvePointX.subtract(BigInteger.ONE);
 
 			// if newValue equals -1, it has to be set to the maxValue of the
 			// equation
-			if (xVal.compareTo(new BigInteger("-1")) == 0) {
-				xVal = Configuration._ellipticCurveParamP.subtract(BigInteger.ONE);
+			if (newVal.compareTo(new BigInteger("-1")) == 0) {
+				newVal = Configuration._ellipticCurveParamP.subtract(BigInteger.ONE);
 
 				// Call for higher value
-				return Functions.CurveGenChanged(true, false, xVal, BigInteger.ZERO);
+				newVal = Functions.curveGenChanged(true, false, newVal, BigInteger.ZERO);
 			}
 			else {
 				// Call for lower value
-				return Functions.CurveGenChanged(true, false, xVal, BigInteger.ZERO);
+				newVal = Functions.curveGenChanged(true, false, newVal, BigInteger.ZERO);
 			}
 
 			// don't override _ellipticCurvePointX here, the setValue method
 			// will be invoked right after that!
+			GeneratingECCTab.SetSpinnerValues();
+			return newVal;
 		}
 
 		@Override
@@ -124,16 +145,18 @@ public class InteractionTabECC {
 		 * Gets the next possible x-Value that has corresponding y-values fulfilling the curve equation
 		 */
 		public Object getNextValue() {
-			BigInteger xVal = Configuration._ellipticCurvePointX.add(BigInteger.ONE);
+			System.out.println("ModelCurvePointX.getNextValue");
+			BigInteger newVal = Configuration._ellipticCurvePointX.add(BigInteger.ONE);
 
 			// if newValue is greater than maxValue, the Value has to be
 			// realigned to FieldSize
-			if (xVal.compareTo(Configuration._ellipticCurveParamP) >= 0)
-				xVal = xVal.mod(Configuration._ellipticCurveParamP);
+			if (newVal.compareTo(Configuration._ellipticCurveParamP) >= 0)
+				newVal = newVal.mod(Configuration._ellipticCurveParamP);
 
 			// Call for greater Value
-			xVal = Functions.CurveGenChanged(true, true, xVal, BigInteger.ZERO);
-			return xVal;
+			newVal = Functions.curveGenChanged(true, true, newVal, BigInteger.ZERO);
+			GeneratingECCTab.SetSpinnerValues();
+			return newVal;
 		}
 	};
 	public static SpinnerNumberModel modelCurvePointY = new SpinnerNumberModel() {
@@ -179,7 +202,7 @@ public class InteractionTabECC {
 			BigInteger yVal = Configuration._ellipticCurvePointY.subtract(BigInteger.ONE);
 
 			// Call for lower Value
-			return Functions.CurveGenChanged(false, false, Configuration._ellipticCurvePointX, yVal);
+			return Functions.curveGenChanged(false, false, Configuration._ellipticCurvePointX, yVal);
 		}
 
 		@Override
@@ -187,7 +210,7 @@ public class InteractionTabECC {
 			BigInteger yVal = Configuration._ellipticCurvePointY.add(BigInteger.ONE);
 
 			// Call for higher Value
-			return Functions.CurveGenChanged(false, true, Configuration._ellipticCurvePointX, yVal);
+			return Functions.curveGenChanged(false, true, Configuration._ellipticCurvePointX, yVal);
 		}
 	};
 
@@ -217,8 +240,9 @@ public class InteractionTabECC {
 			if (!newValue.isProbablePrime(25)) {
 				boolean newValueIsGreaterThanBefore;
 
-				if (((BigInteger) getValue()).compareTo(newValue) > 0)
+				if (((BigInteger) getValue()).compareTo(newValue) > 0) {
 					newValueIsGreaterThanBefore = false;
+				}
 				else {
 					newValueIsGreaterThanBefore = true;
 				}
@@ -232,9 +256,9 @@ public class InteractionTabECC {
 			}
 
 			Configuration._ellipticCurveParamP = newValue;
-			GeneratingECCTab.SetSpinnerValues();
-			// doesnt work
-			// GeneratingECCTab.UpdateCurveEquationInGUI();
+			ECCField.resetECCField();
+			ECCField.recalculateGeneratorPoint();
+			GeneratingECCTab.updateCurveEquationInGUI();
 		}
 
 		@Override

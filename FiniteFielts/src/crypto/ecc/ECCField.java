@@ -4,7 +4,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class eccField {
+import crypto.conductor.tabs.InteractionTabECC;
+
+public class ECCField {
 
 	public static List<Dictionary<BigInteger, List<BigInteger>>> _ECC_Curve_Punktliste = new ArrayList<Dictionary<BigInteger, List<BigInteger>>>();
 
@@ -35,7 +37,7 @@ public class eccField {
 	}
 
 	/**
-	 * Specifies, if given key is present or not
+	 * Specifies if given key is present or not
 	 * 
 	 * @param key
 	 * @return
@@ -96,5 +98,38 @@ public class eccField {
 			nextKey = nextKey.add(BigInteger.ONE);
 		}
 		return indexOf(nextKey);
+	}
+
+	/**
+	 * Returns the inverse element of given value within the actual field
+	 * 
+	 * @param Value
+	 * @param Koerper
+	 * @return
+	 */
+	public static BigInteger GetInverseValue(BigInteger Value, BigInteger Koerper) {
+		while (Value.compareTo(BigInteger.ZERO) < 0)
+			Value = Value.add(Koerper);
+
+		for (BigInteger i = BigInteger.ONE; i.compareTo(Koerper) < 0; i = i.add(BigInteger.ONE)) {
+			if (i.multiply(Value).mod(Koerper).compareTo(BigInteger.ONE) == 0)
+				return i;
+		}
+		return BigInteger.ZERO;
+	}
+
+	/**
+	 * Resets all previously calculated values of the field.
+	 */
+	public static void resetECCField() {
+		_ECC_Curve_Punktliste.clear();
+	}
+
+	/**
+	 * Tries to find new x- and y-value of generator point with minimal
+	 * difference to old values for new ECC-Field
+	 */
+	public static void recalculateGeneratorPoint() {
+		InteractionTabECC.modelCurvePointX.setValue(Configuration._ellipticCurvePointX);
 	}
 }

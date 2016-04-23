@@ -1,5 +1,6 @@
 package crypto.conductor.tabs;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,7 +22,7 @@ public class GeneratingECCTab {
 	private static JSpinner _ellipticCurveBSpinner;
 
 	private static JLabel _ellipticCurvePrimLabel;
-	private static JSpinner _ellipticCurvePrim;
+	private static JSpinner _ellipticCurvePSpinner;
 
 	private static JLabel _ellipticCurvePoint;
 	private static JLabel _ellipticCurvePointXLabel;
@@ -54,18 +55,9 @@ public class GeneratingECCTab {
 		_ellipticCurveALable.setBounds(40, 40, 20, 20);
 		eccPanel.add(_ellipticCurveALable);
 
-		_ellipticCurveASpinner = new JSpinner(InteractionTabECC.modelCurveParamA);
-		_ellipticCurveASpinner.setBounds(60, 40, 100, 20);
-		_ellipticCurveASpinner.setValue(1);
-		eccPanel.add(_ellipticCurveASpinner);
-
 		_ellipticCurveBLable = new JLabel("B: ");
 		_ellipticCurveBLable.setBounds(40, 70, 20, 20);
 		eccPanel.add(_ellipticCurveBLable);
-
-		_ellipticCurveBSpinner = new JSpinner(InteractionTabECC.modelCurveParamB);
-		_ellipticCurveBSpinner.setBounds(60, 70, 100, 20);
-		eccPanel.add(_ellipticCurveBSpinner);
 
 		_ellipticCurvePoint = new JLabel("Curve Point");
 		_ellipticCurvePoint.setBounds(400, 15, 200, 20);
@@ -75,52 +67,64 @@ public class GeneratingECCTab {
 		_ellipticCurvePointXLabel.setBounds(400, 40, 20, 20);
 		eccPanel.add(_ellipticCurvePointXLabel);
 
-		_ellipticCurvePointXSpinner = new JSpinner(InteractionTabECC.modelCurvePointX);
-		_ellipticCurvePointXSpinner.setBounds(420, 40, 100, 20);
-		eccPanel.add(_ellipticCurvePointXSpinner);
-
 		_ellipticCurvePointYLabel = new JLabel("y: ");
 		_ellipticCurvePointYLabel.setBounds(400, 70, 20, 20);
 		eccPanel.add(_ellipticCurvePointYLabel);
-
-		_ellipticCurvePointYSpinner = new JSpinner(InteractionTabECC.modelCurvePointY);
-		_ellipticCurvePointYSpinner.setBounds(420, 70, 100, 20);
-		eccPanel.add(_ellipticCurvePointYSpinner);
 
 		_ellipticCurvePrimLabel = new JLabel("prim number p:");
 		_ellipticCurvePrimLabel.setBounds(200, 15, 100, 25);
 		eccPanel.add(_ellipticCurvePrimLabel);
 
-		_ellipticCurvePrim = new JSpinner(InteractionTabECC.modelFieldParamP);
-		_ellipticCurvePrim.setBounds(200, 35, 55, 22);
-		eccPanel.add(_ellipticCurvePrim);
-
 		_ellipticCurve_Output = new JLabel("<html>y<sup>2</sup> = x<sup>3</sup> + 1x + 0 mod 23</html>");
 		_ellipticCurve_Output.setBounds(200, 80, 200, 30);
 		eccPanel.add(_ellipticCurve_Output);
 
-		_keyPrivateAliceLabel = new JLabel("Geheimer Schlüssel Alice:");
+		_ellipticCurveASpinner = new JSpinner(InteractionTabECC.modelCurveParamA);
+		_ellipticCurveASpinner.setBounds(60, 40, 100, 20);
+		_ellipticCurveASpinner.setValue(1);
+		eccPanel.add(_ellipticCurveASpinner);
+
+		_ellipticCurveBSpinner = new JSpinner(InteractionTabECC.modelCurveParamB);
+		_ellipticCurveBSpinner.setBounds(60, 70, 100, 20);
+		eccPanel.add(_ellipticCurveBSpinner);
+
+		_ellipticCurvePointXSpinner = new JSpinner(InteractionTabECC.modelCurvePointX);
+		_ellipticCurvePointXSpinner.setBounds(420, 40, 100, 20);
+		eccPanel.add(_ellipticCurvePointXSpinner);
+
+		_ellipticCurvePointYSpinner = new JSpinner(InteractionTabECC.modelCurvePointY);
+		_ellipticCurvePointYSpinner.setBounds(420, 70, 100, 20);
+		eccPanel.add(_ellipticCurvePointYSpinner);
+
+		_ellipticCurvePSpinner = new JSpinner(InteractionTabECC.modelFieldParamP);
+		_ellipticCurvePSpinner.setBounds(200, 35, 55, 22);
+		eccPanel.add(_ellipticCurvePSpinner);
+
+		_keyPrivateAliceLabel = new JLabel("Geheimer Schlï¿½ssel Alice:");
 		_keyPrivateAliceLabel.setBounds(40, 120, 200, 20);
 		eccPanel.add(_keyPrivateAliceLabel);
 
-		_keyPrivateBobLabel = new JLabel("Geheimer Schlüssel Bob:");
+		_keyPrivateBobLabel = new JLabel("Geheimer Schlï¿½ssel Bob:");
 		_keyPrivateBobLabel.setBounds(400, 120, 200, 20);
 		eccPanel.add(_keyPrivateBobLabel);
 
-		_keyPublicAliceLabel = new JLabel("Öffentlicher Schlüssel Alice:");
+		_keyPublicAliceLabel = new JLabel("ï¿½ffentlicher Schlï¿½ssel Alice:");
 		_keyPublicAliceLabel.setBounds(40, 200, 200, 20);
 		eccPanel.add(_keyPublicAliceLabel);
 
-		_keyPublicBobLabel = new JLabel("Öffentlicher Schlüssel Bob:");
+		_keyPublicBobLabel = new JLabel("ï¿½ffentlicher Schlï¿½ssel Bob:");
 		_keyPublicBobLabel.setBounds(400, 200, 200, 20);
 		eccPanel.add(_keyPublicBobLabel);
 
-		_keySharedLabel = new JLabel("Gemeinsamer Schlüssel:");
+		_keySharedLabel = new JLabel("Gemeinsamer Schlï¿½ssel:");
 		_keySharedLabel.setBounds(220, 280, 200, 20);
 		eccPanel.add(_keySharedLabel);
 
-		_keyPrivateAlice_Output = new JLabel("");
+		_keyPrivateAlice_Output = new JLabel("???");
 		_keyPrivateAlice_Output.setBounds(40, 140, 200, 20);
+		// why does this nothing!?
+		_keyPrivateAlice_Output.setBackground(Color.black);
+		_keyPrivateAlice_Output.setForeground(Color.black);
 		eccPanel.add(_keyPrivateAlice_Output);
 
 		_keyPrivateBob_Output = new JLabel("");
@@ -139,7 +143,7 @@ public class GeneratingECCTab {
 		_keyShared_Output.setBounds(220, 300, 200, 20);
 		eccPanel.add(_keyShared_Output);
 
-		_generateKeys = new JButton("SchlÃ¼ssel berechnen");
+		_generateKeys = new JButton("Schlï¿½ssel berechnen");
 		_generateKeys.setBounds(400, 330, 80, 50);
 		_generateKeys.addActionListener(generateKeys());
 		eccPanel.add(_generateKeys);
@@ -163,8 +167,8 @@ public class GeneratingECCTab {
 		};
 	}
 
-	public static void UpdateCurveEquationInGUI() {
-		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %i x + %i mod %i</html>", Configuration._ellipticCurveParamA, Configuration._ellipticCurveParamB, Configuration._ellipticCurveParamP));
+	public static void updateCurveEquationInGUI() {
+		_ellipticCurve_Output.setText(String.format("<html>y<sup>2</sup> = x<sup>3</sup> + %s x + %s mod %s</html>", Configuration._ellipticCurveParamA.toString(), Configuration._ellipticCurveParamB.toString(), Configuration._ellipticCurveParamP.toString()));
 		// Code unreachable -> error in line above?
 		_ellipticCurve_Output.repaint();
 
@@ -173,7 +177,7 @@ public class GeneratingECCTab {
 	public static void SetSpinnerValues() {
 		_ellipticCurveASpinner.setValue(Configuration._ellipticCurveParamA);
 		_ellipticCurveBSpinner.setValue(Configuration._ellipticCurveParamB);
-		_ellipticCurvePrim.setValue(Configuration._ellipticCurveParamP);
+		_ellipticCurvePSpinner.setValue(Configuration._ellipticCurveParamP);
 		_ellipticCurvePointXSpinner.setValue(Configuration._ellipticCurvePointX);
 		_ellipticCurvePointYSpinner.setValue(Configuration._ellipticCurvePointY);
 	}
