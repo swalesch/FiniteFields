@@ -6,7 +6,7 @@ import javax.swing.SpinnerNumberModel;
 
 import crypto.ecc.Configuration;
 import crypto.ecc.ECCField;
-import crypto.ecc.Functions;
+import crypto.ecc.ECCFieldFunctions;
 
 /**
  * Provides functionalities for GUI-Interaction in ECC-Tab
@@ -23,6 +23,7 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
+			System.out.println("ModelCurveParamA.setValue " + value.toString());
 			BigInteger newVal = new BigInteger(value.toString());
 
 			if (newVal.compareTo(Configuration._ellipticCurveParamA) == 0) {
@@ -52,6 +53,7 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
+			System.out.println("ModelCurveParamB.setValue " + value.toString());
 			BigInteger newVal = new BigInteger(value.toString());
 
 			if (newVal.compareTo(Configuration._ellipticCurveParamB) == 0) {
@@ -98,18 +100,13 @@ public class InteractionTabECC {
 
 			Configuration._ellipticCurvePointX = newValue;
 
-			if (newValueIsGreaterThanBefore)
-				Functions.curveGenChanged(true, true, newValue, Configuration._ellipticCurvePointY);
-			else
-				Functions.curveGenChanged(true, false, newValue, Configuration._ellipticCurvePointY);
-
+			ECCFieldFunctions.getGeneratorPointX(newValueIsGreaterThanBefore, newValue);
 			GeneratingECCTab.SetSpinnerValues();
 		}
 
 		@Override
 		public Object getValue() {
-			System.out.println("ModelCurvePointX.getValue "
-					+ Configuration._ellipticCurvePointX.toString());
+			System.out.println("ModelCurvePointX.getValue");
 			return Configuration._ellipticCurvePointX;
 		}
 
@@ -118,7 +115,7 @@ public class InteractionTabECC {
 		 * Gets the previous possible x-Value that has corresponding y-values fulfilling the curve equation
 		 */
 		public Object getPreviousValue() {
-			System.out.println("ModelCurvePointX.previousValue");
+			System.out.println("ModelCurvePointX.getPreviousValue");
 			BigInteger newVal = Configuration._ellipticCurvePointX.subtract(BigInteger.ONE);
 
 			// if newValue equals -1, it has to be set to the maxValue of the
@@ -127,11 +124,11 @@ public class InteractionTabECC {
 				newVal = Configuration._ellipticCurveParamP.subtract(BigInteger.ONE);
 
 				// Call for higher value
-				newVal = Functions.curveGenChanged(true, false, newVal, BigInteger.ZERO);
+				newVal = ECCFieldFunctions.getGeneratorPointX(true, newVal);
 			}
 			else {
 				// Call for lower value
-				newVal = Functions.curveGenChanged(true, false, newVal, BigInteger.ZERO);
+				newVal = ECCFieldFunctions.getGeneratorPointX(false, newVal);
 			}
 
 			// don't override _ellipticCurvePointX here, the setValue method
@@ -150,11 +147,12 @@ public class InteractionTabECC {
 
 			// if newValue is greater than maxValue, the Value has to be
 			// realigned to FieldSize
-			if (newVal.compareTo(Configuration._ellipticCurveParamP) >= 0)
+			if (newVal.compareTo(Configuration._ellipticCurveParamP) >= 0) {
 				newVal = newVal.mod(Configuration._ellipticCurveParamP);
+			}
 
 			// Call for greater Value
-			newVal = Functions.curveGenChanged(true, true, newVal, BigInteger.ZERO);
+			newVal = ECCFieldFunctions.getGeneratorPointX(true, newVal);
 			GeneratingECCTab.SetSpinnerValues();
 			return newVal;
 		}
@@ -168,49 +166,52 @@ public class InteractionTabECC {
 
 		@Override
 		public void setValue(Object value) {
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+			System.out.println("ModelCurvePointY.setValue " + value.toString());
+			BigInteger newYVal = new BigInteger(value.toString());
+			BigInteger oldYVal = new BigInteger(getValue().toString());
+			if (oldYVal.equals(newYVal)) {
 				super.setValue(value);
 				return;
 			}
 
 			boolean newValueIsGreaterThanBefore;
-			BigInteger newValue = new BigInteger(value.toString());
-			if (((BigInteger) getValue()).compareTo(newValue) > 0)
+			if (oldYVal.compareTo(newYVal) > 0) {
 				newValueIsGreaterThanBefore = false;
+			}
 			else {
 				newValueIsGreaterThanBefore = true;
 			}
 
-			Configuration._ellipticCurvePointY = newValue;
+			Configuration._ellipticCurvePointY = newYVal;
 
-			if (newValueIsGreaterThanBefore)
-				newValue = new BigInteger(getNextValue().toString());
-			else
-				newValue = new BigInteger(getPreviousValue().toString());
+			newYVal = ECCFieldFunctions.getGeneratorPointY(newValueIsGreaterThanBefore, Configuration._ellipticCurvePointY);
 
-			Configuration._ellipticCurvePointY = newValue;
+			Configuration._ellipticCurvePointY = newYVal;
 			GeneratingECCTab.SetSpinnerValues();
 		}
 
 		@Override
 		public Object getValue() {
+			System.out.println("ModelCurvePointY.getValue");
 			return Configuration._ellipticCurvePointY;
 		}
 
 		@Override
 		public Object getPreviousValue() {
+			System.out.println("ModelCurvePointY.getPreviousValue");
 			BigInteger yVal = Configuration._ellipticCurvePointY.subtract(BigInteger.ONE);
 
 			// Call for lower Value
-			return Functions.curveGenChanged(false, false, Configuration._ellipticCurvePointX, yVal);
+			return ECCFieldFunctions.getGeneratorPointY(false, yVal);
 		}
 
 		@Override
 		public Object getNextValue() {
+			System.out.println("ModelCurvePointY.getNextValue");
 			BigInteger yVal = Configuration._ellipticCurvePointY.add(BigInteger.ONE);
 
 			// Call for higher Value
-			return Functions.curveGenChanged(false, true, Configuration._ellipticCurvePointX, yVal);
+			return ECCFieldFunctions.getGeneratorPointY(true, yVal);
 		}
 	};
 
@@ -223,39 +224,43 @@ public class InteractionTabECC {
 
 		@Override
 		public Object getValue() {
+			System.out.println("ModelCurveParamP.getValue");
 			return Configuration._ellipticCurveParamP;
 		}
 
 		@Override
 		public void setValue(Object value) {
+			System.out.println("ModelCurveParamP.setValue " + value.toString());
+			BigInteger newVal = new BigInteger(value.toString());
+			BigInteger oldVal = new BigInteger(getValue().toString());
 
-			if (((BigInteger) getValue()).equals(new BigInteger(value.toString()))) {
+			if (oldVal.equals(newVal)) {
 				super.setValue(value);
 				return;
 			}
 
-			BigInteger newValue = new BigInteger(value.toString());
-
 			// If Number isn't prime, get the next prime-Number
-			if (!newValue.isProbablePrime(25)) {
+			if (!newVal.isProbablePrime(25)) {
 				boolean newValueIsGreaterThanBefore;
 
-				if (((BigInteger) getValue()).compareTo(newValue) > 0) {
+				if (oldVal.compareTo(newVal) > 0) {
 					newValueIsGreaterThanBefore = false;
 				}
 				else {
 					newValueIsGreaterThanBefore = true;
 				}
 
-				Configuration._ellipticCurveParamP = newValue;
+				Configuration._ellipticCurveParamP = newVal;
 
-				if (newValueIsGreaterThanBefore)
-					newValue = new BigInteger(getNextValue().toString());
-				else
-					newValue = new BigInteger(getPreviousValue().toString());
+				if (newValueIsGreaterThanBefore) {
+					newVal = new BigInteger(getNextValue().toString());
+				}
+				else {
+					newVal = new BigInteger(getPreviousValue().toString());
+				}
 			}
 
-			Configuration._ellipticCurveParamP = newValue;
+			Configuration._ellipticCurveParamP = newVal;
 			ECCField.resetECCField();
 			ECCField.recalculateGeneratorPoint();
 			GeneratingECCTab.updateCurveEquationInGUI();
@@ -263,30 +268,29 @@ public class InteractionTabECC {
 
 		@Override
 		public Object getNextValue() {
+			System.out.println("ModelCurveParamP.getNextValue");
 			BigInteger nextVal = Configuration._ellipticCurveParamP.add(BigInteger.ONE);
 
-			while (!nextVal.isProbablePrime(20))
+			while (!nextVal.isProbablePrime(20)) {
 				nextVal = nextVal.add(BigInteger.ONE);
+			}
 
 			return nextVal;
 		}
 
 		@Override
 		public Object getPreviousValue() {
-			if (new BigInteger(getValue().toString()).equals(new BigInteger("-2")))
+			System.out.println("ModelCurveParamP.getPreviousValue");
+			if (new BigInteger(getValue().toString()).equals(new BigInteger("-2"))) {
 				return null;
+			}
 
 			BigInteger nextVal = Configuration._ellipticCurveParamP.subtract(BigInteger.ONE);
 
-			while (!nextVal.isProbablePrime(50))
+			while (!nextVal.isProbablePrime(25))
 				nextVal = nextVal.subtract(BigInteger.ONE);
 
 			return nextVal;
-		}
-
-		@Override
-		public Number getNumber() {
-			return null;
 		}
 	};
 }
