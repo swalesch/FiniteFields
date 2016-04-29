@@ -14,12 +14,12 @@ public class BigPoint {
 		return ((left.X.compareTo(right.X) == 0) && (left.Y.abs().compareTo(right.Y.abs())) == 0);
 	}
 
-	public String ToString() {
-		return String.format("({0}, {1})", X, Y);
+	public String toString() {
+		return String.format("(%s, %s)", X.toString(), Y.toString());
 	}
 
-	public void AddPoint(BigPoint PAdd) {
-		if (this == PAdd.GetNegativePoint())
+	public void addPoint(BigPoint PAdd) {
+		if (this == PAdd.getNegativePoint())
 			throw new IllegalArgumentException("Für Punktaddition von P und Q muss P != -Q sein!");
 
 		BigInteger s, xR, yR;
@@ -32,8 +32,8 @@ public class BigPoint {
 		Y = yR;
 	}
 
-	public static BigPoint AddPoint(BigPoint left, BigPoint right) {
-		if (left == right.GetNegativePoint())
+	public static BigPoint addPoint(BigPoint left, BigPoint right) {
+		if (left == right.getNegativePoint())
 			throw new IllegalArgumentException("Für Punktaddition von P und Q muss P != -Q sein!");
 
 		BigInteger s = BigInteger.ZERO, xR, yR;
@@ -71,11 +71,11 @@ public class BigPoint {
 		return new BigPoint(xR, yR);
 	}
 
-	public BigPoint GetNegativePoint() {
+	public BigPoint getNegativePoint() {
 		return new BigPoint(X, Y.negate());
 	}
 
-	public BigPoint Multiply(BigInteger Factor) {
+	public BigPoint multiply(BigInteger Factor) {
 		// Punkt mit sich selbst addieren
 
 		if (Factor.compareTo(BigInteger.ONE) == 0)
@@ -112,7 +112,7 @@ public class BigPoint {
 		// x * P = 2P + P + P + ... + P
 
 		while (Factor.compareTo(BigInteger.ONE) > 0) {
-			res = AddPoint(this, res);
+			res = addPoint(this, res);
 			Factor = Factor.subtract(BigInteger.ONE);
 		}
 		return res;

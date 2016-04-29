@@ -6,6 +6,9 @@ package crypto.ecc;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import crypto.conductor.tabs.GeneratingECCTab;
 
 /**
  * @author Marcus Schilling
@@ -30,10 +33,11 @@ public class ECCFieldFunctions {
 		boolean foundAssociation = false;
 
 		try {
-			for (int i = 0; i < ECCField._ECC_Curve_Punktliste.size(); i++)
+			for (int i = 0; i < ECCField._ECC_Curve_Punktliste.size(); i++) {
 				if (ECCField.containsKey(newXValue)) {
 					foundAssociation = true;
 				}
+			}
 		}
 		catch (Exception e) {
 
@@ -215,34 +219,30 @@ public class ECCFieldFunctions {
 		 * TBECC_Key_Shared.Text = ""; this.Refresh();
 		 */
 
-		BigInteger keySecretA = BigInteger.ZERO, keySecretB = BigInteger.ZERO;
-		BigPoint keySharedA, keySharedB;
-		BigInteger keyShared = BigInteger.ZERO;
 		BigPoint pointGen;
 
-		// keySecretA = GetSecretKey();
+		Configuration._keySecretA = getSecretKey();
 		// TBECC_Key_Secret_A.Text = KeySecretA.ToString();
 		// this.Refresh();
 
-		// keySecretB = GetSecretKey();
+		Configuration._keySecretB = getSecretKey();
 		// TBECC_Key_Secret_B.Text = KeySecretB.ToString();
 		// this.Refresh();
 
-		// pointGen = new BigPoint((BigInteger) NUDECC_Curve_Gen_X.Value,
-		// (BigInteger) NUDECC_Curve_Gen_Y.Value);
+		pointGen = new BigPoint(Configuration._ellipticCurvePointX, Configuration._ellipticCurvePointY);
 
-		// keySharedA = GetSharedKeyPoint(pointGen, keySecretA);
+		Configuration._keySharedA = getSharedKeyPoint(pointGen, Configuration._keySecretA);
 		// TBECC_Key_Shared_A.Text = KeySharedA.ToString();
 		// this.Refresh();
 
-		// keySharedB = GetSharedKeyPoint(pointGen, keySecretB);
+		Configuration._keySharedB = getSharedKeyPoint(pointGen, Configuration._keySecretB);
 		// TBECC_Key_Shared_B.Text = keySharedB.toString();
 		// this.Refresh();
 
 		boolean exceptionThrown = false;
 
 		try {
-			// keyShared = keySharedB.Multiply(keySecretA).X;
+			Configuration._keyShared = Configuration._keySharedB.multiply(Configuration._keySecretA).X;
 		}
 		catch (IllegalArgumentException ex) {
 			exceptionThrown = true;
@@ -252,14 +252,14 @@ public class ECCFieldFunctions {
 		if (!exceptionThrown) {
 			BigInteger keySymTest = BigInteger.ZERO;
 			try {
-				// keySymTest = keySharedB.Multiply(keySecretA).X;
+				keySymTest = Configuration._keySharedB.multiply(Configuration._keySecretA).X;
 			}
 			catch (IllegalArgumentException ex) {
 				exceptionThrown = true;
-				// BECC_Encrypt_Encrypt_Click(sender, e);
+				generateKeys();
 			}
 
-			if (!exceptionThrown && keyShared.equals(keySymTest)) {
+			if (!exceptionThrown && Configuration._keyShared.equals(keySymTest)) {
 
 				/*
 				 * TBECC_Key_Secret_A.Text = KeySecretA.ToString();
@@ -270,14 +270,34 @@ public class ECCFieldFunctions {
 				 * 
 				 * TBECC_Key_Shared.Text = KeySym.ToString();
 				 */
+				GeneratingECCTab.updateKeysInGUI();
 				// MessageBox.Show(string.Format("Zur Kontrolle: PubKeyA * PrivKeyB = {0}",
 				// KeySharedA.Multiply(KeySecretB).X));
 			}
 			else {
 				// shared-Key wahrscheinlich nicht geeignet, noch einmal
 				// versuchen
-				// BECC_Keys_Calc_Click(sender, e);
+				generateKeys();
 			}
 		}
+	}
+
+	private static BigInteger getSecretKey() {
+		BigInteger ranNumber;
+		BigInteger max = Configuration._ellipticCurveParamP;
+		Random ranGenerator = new Random();
+
+		byte[] rndBytes = new byte[1024];
+		ranGenerator.nextBytes(rndBytes);
+		do {
+			ranNumber = new BigInteger(max.bitLength(), ranGenerator);
+		}
+		while (ranNumber.compareTo(max) >= 0);
+
+		return ranNumber;
+	}
+
+	private static BigPoint getSharedKeyPoint(BigPoint generator, BigInteger privateKey) {
+		return generator.multiply(privateKey);
 	}
 }

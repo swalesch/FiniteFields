@@ -12,6 +12,7 @@ import javax.swing.JSpinner;
 
 import crypto.conductor.Conductor;
 import crypto.ecc.Configuration;
+import crypto.ecc.ECCFieldFunctions;
 
 public class GeneratingECCTab {
 
@@ -100,23 +101,23 @@ public class GeneratingECCTab {
 		_ellipticCurvePSpinner.setBounds(200, 35, 55, 22);
 		eccPanel.add(_ellipticCurvePSpinner);
 
-		_keyPrivateAliceLabel = new JLabel("Geheimer Schl�ssel Alice:");
+		_keyPrivateAliceLabel = new JLabel("Geheimer Schluessel Alice:");
 		_keyPrivateAliceLabel.setBounds(40, 120, 200, 20);
 		eccPanel.add(_keyPrivateAliceLabel);
 
-		_keyPrivateBobLabel = new JLabel("Geheimer Schl�ssel Bob:");
+		_keyPrivateBobLabel = new JLabel("Geheimer Schluessel Bob:");
 		_keyPrivateBobLabel.setBounds(400, 120, 200, 20);
 		eccPanel.add(_keyPrivateBobLabel);
 
-		_keyPublicAliceLabel = new JLabel("�ffentlicher Schl�ssel Alice:");
+		_keyPublicAliceLabel = new JLabel("Oeffentlicher Schluessel Alice:");
 		_keyPublicAliceLabel.setBounds(40, 200, 200, 20);
 		eccPanel.add(_keyPublicAliceLabel);
 
-		_keyPublicBobLabel = new JLabel("�ffentlicher Schl�ssel Bob:");
+		_keyPublicBobLabel = new JLabel("Oeffentlicher Schluessel Bob:");
 		_keyPublicBobLabel.setBounds(400, 200, 200, 20);
 		eccPanel.add(_keyPublicBobLabel);
 
-		_keySharedLabel = new JLabel("Gemeinsamer Schl�ssel:");
+		_keySharedLabel = new JLabel("Gemeinsamer Schluessel:");
 		_keySharedLabel.setBounds(220, 280, 200, 20);
 		eccPanel.add(_keySharedLabel);
 
@@ -143,7 +144,7 @@ public class GeneratingECCTab {
 		_keyShared_Output.setBounds(220, 300, 200, 20);
 		eccPanel.add(_keyShared_Output);
 
-		_generateKeys = new JButton("Schl�ssel berechnen");
+		_generateKeys = new JButton("Schluessel berechnen");
 		_generateKeys.setBounds(400, 330, 80, 50);
 		_generateKeys.addActionListener(generateKeys());
 		eccPanel.add(_generateKeys);
@@ -157,7 +158,7 @@ public class GeneratingECCTab {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-
+					ECCFieldFunctions.generateKeys();
 				}
 				catch (IllegalArgumentException ex) {
 					JOptionPane.showMessageDialog(Conductor._mainFrame, "Illegal argument \n"
@@ -172,6 +173,16 @@ public class GeneratingECCTab {
 		// Code unreachable -> error in line above?
 		_ellipticCurve_Output.repaint();
 
+	}
+
+	public static void updateKeysInGUI() {
+		_keyPrivateAlice_Output.setText(Configuration._keySecretA.toString());
+		_keyPrivateBob_Output.setText(Configuration._keySecretB.toString());
+
+		_keyPublicAlice_Output.setText(Configuration._keySharedA.toString());
+		_keyPublicBob_Output.setText(Configuration._keySharedB.toString());
+
+		_keyShared_Output.setText(Configuration._keyShared.toString());
 	}
 
 	public static void SetSpinnerValues() {
